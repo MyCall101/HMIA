@@ -1,0 +1,8 @@
+D:\csharp\HMIA\HMIA\bin\Debug\HMIA.exe.config
+D:\csharp\HMIA\HMIA\bin\Debug\HMIA.exe
+D:\csharp\HMIA\HMIA\bin\Debug\HMIA.pdb
+D:\csharp\HMIA\HMIA\obj\Debug\HMIA.csproj.AssemblyReference.cache
+D:\csharp\HMIA\HMIA\obj\Debug\HMIA.csproj.CoreCompileInputs.cache
+D:\csharp\HMIA\HMIA\obj\Debug\HMIA.exe
+D:\csharp\HMIA\HMIA\obj\Debug\HMIA.pdb
+D:\csharp\HMIA\HMIA\obj\Debug\HMIA.exe.config

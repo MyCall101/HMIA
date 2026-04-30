@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36717.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMIA", "HMIA\HMIA.csproj", "{F51C2C3F-9F38-4948-95B7-762DB36407CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F51C2C3F-9F38-4948-95B7-762DB36407CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F51C2C3F-9F38-4948-95B7-762DB36407CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F51C2C3F-9F38-4948-95B7-762DB36407CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F51C2C3F-9F38-4948-95B7-762DB36407CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D1C78CF1-09BA-4A54-8484-FD2575000144}
+	EndGlobalSection
+EndGlobal
