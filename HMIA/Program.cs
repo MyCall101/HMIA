@@ -59,25 +59,25 @@ namespace HMIA
 
         static void DisplayMenu(ref string[,] tenants, ref string[,] luxuryRooms, ref string[,] standardRooms,char role)
         {
-
+            string dash = String.Concat(Enumerable.Repeat("-",32));
             bool start = true;
             do
             {
 
-                Console.WriteLine("\t\t\t┌------------------------┐");
-                Console.WriteLine("\t\t\t|  [1] - RESERVE A ROOM\t |");
-                if(role == '2') Console.WriteLine("\t\t\t|  [2] - BACK TO IDENTIFY\t\t |");
+                Console.WriteLine("\t\t\t┌{0}┐",dash);
+                Console.WriteLine("\t\t\t|  [1] - RESERVE A ROOM\t\t |");
+                if(role == '2') Console.WriteLine("\t\t\t|  [2] - MAIN MENU\t\t |");
                 if (role == '1')
                 {
-                    Console.WriteLine("\t\t\t|  [2] - WALK IN\t |");
-                    Console.WriteLine("\t\t\t|  [3] - SEARCH\t\t |");
+                    Console.WriteLine("\t\t\t|  [2] - WALK IN\t\t |");
+                    Console.WriteLine("\t\t\t|  [3] - SEARCH\t\t\t |");
                     Console.WriteLine("\t\t\t|  [4] - VIEW ALL OCCUPANTS\t |");
                     Console.WriteLine("\t\t\t|  [5] - VIEW ROOMS AVAILBLE\t |");
-                    Console.WriteLine("\t\t\t|  [6] - BACK TO IDENTIFY\t\t |");
+                    Console.WriteLine("\t\t\t|  [6] - MAIN MENU\t\t |");
                 }
                 
 
-                Console.WriteLine("\t\t\t└------------------------┘\n");
+                Console.WriteLine("\t\t\t└{0}┘\n",dash);
                 char process = DynamicInputs<char>("\tPlease choose process: ", 0);
 
                 if (role == '1' || role == '2')
@@ -87,8 +87,8 @@ namespace HMIA
                         //Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
                         //if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
                         //{
-                            Room.DisplayHrsRates();
-                            Process(ref tenants, process);
+                            //Room.DisplayHrsRates();
+                            Process(role,ref tenants, process);
                         //}
                     }
                     if (role == '1')
@@ -230,7 +230,7 @@ namespace HMIA
 
         
 
-        static void Process(ref string[,] tenants,char process)
+        static void Process(char role,ref string[,] tenants,char process)
         {
             string[] addTenants;
             string fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ",1);
@@ -389,8 +389,10 @@ namespace HMIA
                         {
                             // // Validation start here for strings
                             Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 0, new string[] { "1", "2" });
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 1, 
+                                new string[] { "1", "2", "3", "4", "5", "6" });
 
-                            if(isValid) return (T)(object)_char;
+                            if (isValid) return (T)(object)_char;
                         }
                         else
                         {
