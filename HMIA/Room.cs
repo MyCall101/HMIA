@@ -20,69 +20,11 @@ namespace HMIA
             Console.WriteLine("\t└----------------------------------------------------┘");
         }
 
-        public static void Draw(string[,] luxury, string[,] standard, ref int availableCtr, int dispRowCtr)
+        public static void DesignDraw()
         {
-            string dash = string.Concat(Enumerable.Repeat("-", 37));
-            //Console.WriteLine("\t┌-------------------------------------┐");
-            Console.WriteLine("\t┌{0}┐\t\t┌{1}┐", dash,dash);
-            for (int n = 0; n < luxury.GetLength(0); n++)
-            {
-                if (dispRowCtr <= 5)
-                {
-                    if (luxury[n, 1] == "0")
-                    {
 
-                        //Console.Write("\t| " + (Convert.ToInt32(rooms[n, 0]).ToString("00")) + " |");
-                        Console.Write("\t| " + luxury[n, 0] + " |");
-
-                        dispRowCtr++;
-                        availableCtr++;
-                    }
-                    else
-                    {
-                        Console.Write("\t| OC |");
-                        dispRowCtr++;
-                        availableCtr--;
-                    }
-
-                    if (standard[n, 1] == "0")
-                    {
-
-                        //Console.Write("\t| " + (Convert.ToInt32(rooms[n, 0]).ToString("00")) + " |");
-                        Console.Write("\t\t| " + standard[n, 0] + " |");
-
-                        dispRowCtr++;
-                        availableCtr++;
-                    }
-                    else
-                    {
-                        Console.Write("\t\t| OC |");
-                        dispRowCtr++;
-                        availableCtr--;
-                    }
-                }
-                if (dispRowCtr > 5)
-                {
-                    dispRowCtr = 1;
-                    if (n < 5)
-                    {
-                        //Console.WriteLine("\n\t|-------------------------------------|");
-                        Console.WriteLine("\n\t|{0}|\t\t|{1}|", dash,dash);
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                    }
-
-                }
-
-            }
-            if (availableCtr == 0)
-                Console.WriteLine("\t|\tNo Rooms Available. \t     |\t\t|\tNo Rooms Available. \t     |");
-
-            //Console.WriteLine("\t└-------------------------------------┘");
-            Console.WriteLine("\t└{0}┘\t\t└{1}┘", dash,dash);
         }
+        
         public static void Draw(string[,] rooms, ref int availableCtr, int dispRowCtr)
         {
             string dash = string.Concat(Enumerable.Repeat("-", 37));
@@ -137,7 +79,7 @@ namespace HMIA
             Console.WriteLine("\n\tAmeties: Free Tissue,");
             int ctr = 1;
             //DrawRooms(Program.luxuryRooms, ref availableCtrLuxRom, ctr);
-            Draw(Program.luxuryRooms, Program.standardRooms, ref availableCtrLuxRom, ctr);
+            //Draw(Program.luxuryRooms, Program.standardRooms, ref availableCtrLuxRom, ctr);
 
             // STANDARD ROOMS
             Console.WriteLine("\n\tAvailable Standard Rooms:");
@@ -145,6 +87,34 @@ namespace HMIA
 
         }
 
+        public static void SetDesigned(ref string[,] luxuryRooms, ref string[,] standardRooms)
+        {
+            luxuryRooms = new string[3, 5]
+            {
+                { "L01","0","Single","1","High thread-count sheets, plush mattresses, and curated pillow menus." +
+                                          "Rain showers, deep soaking tubs, heated floors, and designer toiletries." +
+                                          "Smart room controls (voice/tablet), high-end sound systems, and streaming-ready TVs." },
+                { "L02","0","Double","2","High thread-count sheets, plush mattresses, and curated pillow menus." +
+                                          "Rain showers, deep soaking tubs, heated floors, and designer toiletries." +
+                                          "Smart room controls (voice/tablet), high-end sound systems, and streaming-ready TVs." },
+                { "L03","0","Triple/Quad","3-4","High thread-count sheets, plush mattresses, and curated pillow menus." +
+                                          "Rain showers, deep soaking tubs, heated floors, and designer toiletries." +
+                                          "Smart room controls (voice/tablet), high-end sound systems, and streaming-ready TVs."}
+            };
+
+            standardRooms = new string[3, 5]
+            {
+                { "S01","0","Single","1","Clean linens, basic mattress, 1–2 pillows." +
+                                          "Shower/tub combo, basic soap, shampoo, and hairdryer." +
+                                          "Standard TV, basic Wi-Fi, and telephone." },
+                { "S02","0","Double","2","Clean linens, basic mattress, 1–2 pillows." +
+                                          "Shower/tub combo, basic soap, shampoo, and hairdryer." +
+                                          "Standard TV, basic Wi-Fi, and telephone." },
+                { "S03","0","Triple/Quad","3-4","Clean linens, basic mattress, 1–2 pillows." +
+                                          "Shower/tub combo, basic soap, shampoo, and hairdryer." +
+                                          "Standard TV, basic Wi-Fi, and telephone."}
+            };
+        }
         public static void Sets(ref string[,] luxuryRooms, ref string[,] standardRooms)
         {
             luxuryRooms = new string[10, 2];
