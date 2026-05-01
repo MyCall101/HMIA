@@ -29,42 +29,65 @@ namespace HMIA
 
             tenants = newTenants;
         }
-        public static void ViewInfo(string searchBy = "", int index = 0)
+        public static void ViewInfo(char role,string searchBy = "", int index = 0)
         {
-            
 
-            Console.WriteLine("\n\t┌-----------------------------------------------------------------------------------------------------------------┐");
+            string dash = (role == '1')? String.Concat(Enumerable.Repeat("-",108)): String.Concat(Enumerable.Repeat("-", 82));
+            Console.WriteLine("\n\t┌{0}┐",dash);
             if (Program.tenants.GetLength(0) > 0)
             {
-                Console.WriteLine($"\t|{"Name",-30}{"ROOM_TYPE",-15}{"ROOM #",-9}{"HOURS",-7}{"DATE",-12}{"CHECK-IN",-10}" +
-                    $"{"PROCESS_TYPE",-14}{"PAYMENT",-9}{"BALANCE",-7}|");
-                Console.WriteLine("\t|-----------------------------------------------------------------------------------------------------------------|");
+                if (role == '1')
+                {
+                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
+                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAYMENT", "PROCESS_TYPE","ROLE");
+                    
+                }
+                else
+                {
+                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
+                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAYMENT");
+                    
+                }
+                Console.WriteLine("\t|{0}|",dash);
 
                 for (int i = 0; i < Program.tenants.GetLength(0); i++)
                 {
-
-
                     if (searchBy == "" && index == 0)
                     {
-                        string processType = Program.tenants[i, 7];
-                        int payment = Convert.ToInt32(Program.tenants[i, 8]);
-                        string balance = (processType == "RESERVE ROOM" ? ((payment * 2) - payment).ToString() : "PAID");
-                        Console.WriteLine($"\t|{Program.tenants[i, 0] + " " + Program.tenants[i, 1],-30}{Program.tenants[i, 2],-15}" +
-                            $"{Program.tenants[i, 3],-9}{Program.tenants[i, 4],-7}{Program.tenants[i, 5],-12}{Program.tenants[i, 6],-10}{processType,-14}" +
-                            $"{payment.ToString(),-9}{balance,-7}|");
+                        if (role == '1')
+                        {
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|", 
+                                Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
+                                Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
+                                Program.tenants[i, 8],Program.tenants[i, 1], Program.tenants[i, 0]);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
+                                Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
+                                Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
+                                Program.tenants[i, 8]);
+                        }
 
                         if (i != Program.tenants.GetLength(0) - 1)
-                            Console.WriteLine("\t|-----------------------------------------------------------------------------------------------------------------|");
+                            Console.WriteLine("\t|{0}|",dash);
                     }
                     else
                     {
-                        string processType = Program.tenants[index, 7];
-                        int payment = Convert.ToInt32(Program.tenants[index, 8]);
-                        string balance = (processType == "RESERVE ROOM" ? ((payment * 2) - payment).ToString() : "PAID");
-
-                        Console.WriteLine($"\t|{Program.tenants[index, 0] + " " + Program.tenants[index, 1],-30}{Program.tenants[index, 2],-15}" +
-                            $"{Program.tenants[index, 3],-9}{Program.tenants[index, 4],-7}{Program.tenants[index, 5],-12}{Program.tenants[index, 6],-10}{processType,-14}" +
-                            $"{payment.ToString(),-9}{balance,-7}|");
+                        if (role == '1')
+                        {
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
+                                Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
+                                Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
+                                Program.tenants[i, 8],Program.tenants[i, 1], Program.tenants[i, 0]);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
+                                Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
+                                Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
+                                Program.tenants[i, 8]);
+                        }
 
                         break;
                     }
@@ -75,7 +98,7 @@ namespace HMIA
             {
                 Console.WriteLine("\t|\t\t\t\t\t\t\tNO OCCUPANTS.\t\t\t\t\t\t\t   |");
             }
-            Console.WriteLine("\t└-----------------------------------------------------------------------------------------------------------------┘\n");
+            Console.WriteLine("\t└{0}┘\n",dash);
         }
     }
 }
