@@ -84,12 +84,12 @@ namespace HMIA
                 {
                     if (process == '1' || (role == '1' && process=='2'))
                     {
-                        Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
-                        if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
-                        {
+                        //Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
+                        //if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
+                        //{
                             Room.DisplayHrsRates();
                             Process(ref tenants, process);
-                        }
+                        //}
                     }
                     if (role == '1')
                     {
