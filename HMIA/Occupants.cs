@@ -77,16 +77,16 @@ namespace HMIA
                         if (role == '1')
                         {
                             Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
-                                Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
-                                Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
-                                Program.tenants[i, 8],Program.tenants[i, 1], Program.tenants[i, 0]);
+                                Program.tenants[index, 2] + " " + Program.tenants[index, 3], Program.tenants[index, 4],
+                                Program.tenants[index, 5], Program.tenants[index, 6], Program.tenants[index, 7],
+                                Program.tenants[index, 8],Program.tenants[index, 1], Program.tenants[index, 0]);
                         }
                         else
                         {
                             Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
-                                Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
-                                Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
-                                Program.tenants[i, 8]);
+                                Program.tenants[index, 2] + " " + Program.tenants[index, 3], Program.tenants[index, 4],
+                                Program.tenants[index, 5], Program.tenants[index, 6], Program.tenants[index, 7],
+                                Program.tenants[index, 8]);
                         }
 
                         break;

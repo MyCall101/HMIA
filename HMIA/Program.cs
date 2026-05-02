@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Remoting.Lifetime;
@@ -26,8 +27,8 @@ namespace HMIA
         public static string[,] luxuryRooms = new string[,] { };
         public static string[,] standardRooms = new string[,] { };
         public static string[,] tenants = new string[0, 9];
-        public static int availableCtrLuxRom = 0;
-        public static int availableCtrStandRom = 0;
+        public static int availableCtrLuxRom = 3;
+        public static int availableCtrStandRom = 3;
 
         static void Main(string[] args)
         {
@@ -80,7 +81,8 @@ namespace HMIA
                     Console.WriteLine("\t\t\t|  [3] - SEARCH\t\t\t |");
                     Console.WriteLine("\t\t\t|  [4] - VIEW ALL OCCUPANTS\t |");
                     Console.WriteLine("\t\t\t|  [5] - VIEW ROOMS AVAILBLE\t |");
-                    Console.WriteLine("\t\t\t|  [6] - MAIN MENU\t\t |");
+                    Console.WriteLine("\t\t\t|  [6] - CHECK-OUT\t\t |");
+                    Console.WriteLine("\t\t\t|  [7] - MAIN MENU\t\t |");
                 }
                 
 
@@ -94,7 +96,7 @@ namespace HMIA
                     if (process == '1' || (role == '1' && process=='2'))
                     {
                         
-                        Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
+                        Room.DisplayAvailableRooms();
                         if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
                         {
                             Process(role,ref tenants, process);
@@ -106,6 +108,7 @@ namespace HMIA
                         if (process == '3')
                         {
                             // SEARCH
+                            SearchMethod(ref tenants, ref luxuryRooms, ref standardRooms, role);
                         }
                         else if (process == '4')
                         {
@@ -115,8 +118,12 @@ namespace HMIA
                         {
                             //VIEW AVAILABLE ROOM
                         }
+                        else if (process == '6')
+                        {
+                            //CHECK OUT
+                        }
                     }
-                    if ((role == '2' && process == '2') || (role == '1' && process == '6'))
+                    if ((role == '2' && process == '2') || (role == '1' && process == '7'))
                     {
                         start = false;
                         //back to identify yourself
@@ -126,69 +133,110 @@ namespace HMIA
                     
                 }else if (role == '3')
                 {
-                    Console.WriteLine("\n\tExiting system...");
+                    Console.WriteLine("\n\tExiting system...\n");
                     Environment.Exit(0);
                 }
             } while (start);
 
         }
         
-        static void SearchMethod()
+        static void SearchMethod(ref string[,] tenants, ref string[,] luxuryRooms, ref string[,] standardRooms, char role)
         {
             bool isSearch = true;
             do
             {
-                Console.Clear();
+                
                 Console.WriteLine("\t\t\t┌------------------------┐");
-                Console.WriteLine("\t\t\t|\t[O] - OCCUPANT\t |");
-                Console.WriteLine("\t\t\t|\t[R] - ROOM\t |");
-                Console.WriteLine("\t\t\t|\t[X] - EXIT\t |");
+                Console.WriteLine("\t\t\t|[O] - OCCUPANTS\t |");
+                Console.WriteLine("\t\t\t|[R] - ROOM CODE\t |");
+                Console.WriteLine("\t\t\t|[D] - DATES\t\t |");
+                Console.WriteLine("\t\t\t|[X] - BACK TO PROCESS   |");
                 Console.WriteLine("\t\t\t└------------------------┘");
-                Console.Write("\n\tPlease choose search by:");
-                string choose = Console.ReadLine().ToUpper();
-                switch (choose)
+                char choose = DynamicInputs<char>("\tPlease choose search by: ",9); //Console.ReadLine().ToUpper();
+                if (char.ToUpper(choose) == 'O')
                 {
-                    case "O":
-                        Console.Write("\n\tPlease enter Firstname or Lastname: ");
-                        string name = Console.ReadLine();
-                        SearchBy(choose, name);
-                        break;
-                    case "R":
-                        Console.Write("\n\tPlease enter the Room Number: ");
-                        string number = Console.ReadLine();
-                        SearchBy(choose, number);
-                        break;
-                    case "X":
-                        isSearch = false;
-                        break;
-                    default:
-                        Console.WriteLine("\n\t->Invalid choice.!");
-                        break;
+                    Console.Write("\n\tPlease enter Firstname or Lastname: ");
+                    string name = Console.ReadLine();
+                    SearchBy(choose, name,role);
+                }else if (char.ToUpper(choose) == 'R')
+                {
+                    Console.Write("\n\tPlease enter the Room Code: ");
+                    string number = Console.ReadLine();
+                    SearchBy(choose, number,role);
                 }
+                else if (char.ToUpper(choose) == 'D')
+                {
+                    Console.Write("\n\tCheck In date: ");
+                    string date1 = Console.ReadLine();
+                    Console.Write("\n\tCheck Out date: ");
+                    string date2 = Console.ReadLine();
+                    SearchBy(choose, date1,date2, role);
+                }
+                else if (char.ToUpper(choose) == 'X')
+                {
+                    Console.Clear();
+                    isSearch = false;
+                    DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms, role);
+                }
+                
             } while (isSearch);
             
         }
 
-        static void SearchBy(string by,string value)
+        static void SearchBy(char by, string value, string value2, char role)
+        {
+            bool found = false;
+            if (tenants.GetLength(0) > 0)
+            {
+                for (int i = 0; i < tenants.GetLength(0); i++)
+                {
+                    if (by.ToString().ToUpper() == "D")
+                    {
+                        DateTime _date1, _date2,_checkin,_checkout;
+                        bool valid1 = DateTime.TryParseExact(value,"MM-dd-yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None ,out _date1);
+                        bool valid2 = DateTime.TryParseExact(value2, "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _date2);
+                        bool valid3 = DateTime.TryParseExact(tenants[i, 6], "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _checkin);
+                        bool valid4 = DateTime.TryParseExact(tenants[i, 7], "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _checkout);
+                        if (valid1 && valid2 && valid3 && valid4) {
+                            if (_checkin == _date1 && _checkout == _date2)
+                            {
+                                Occupants.ViewInfo(role, by.ToString(), i);
+                                found = true;
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
+                if (!found)
+                    Console.WriteLine("\n\t No Record Found.");
+            }
+            else
+            {
+                Console.WriteLine("\n\t No Data.");
+            }
+        }
+
+        static void SearchBy(char by,string value,char role)
         {
             bool found = false;
             if (tenants.GetLength(0)>0)
             {
                 for (int i=0;i<tenants.GetLength(0);i++)
                 {
-                    if(by == "O")
+                    if(by.ToString().ToUpper() == "O")
                     {
-                        if (value.ToUpper() == tenants[i, 0].ToUpper() || value.ToUpper() == tenants[i, 1].ToUpper())
+                        if (value.ToUpper() == tenants[i, 2].ToUpper() || value.ToUpper() == tenants[i, 3].ToUpper())
                         {
-                            //Occupants.ViewInfo(role,by,i);
+                            Occupants.ViewInfo(role,by.ToString(),i);
                             found = true;
                             break;
                         }
-                    }else if (by == "R")
+                    }else if (by.ToString().ToUpper() == "R")
                     {
-                        if (value == tenants[i,3])
+                        if (value.ToUpper() == tenants[i,4].ToUpper())
                         {
-                            //Occupants.ViewInfo(by, i);
+                            Occupants.ViewInfo(role,by.ToString(), i);
                             found = true;
                             break;
                         }
@@ -227,8 +275,8 @@ namespace HMIA
                 Occupants.AddNew(ref tenants, addTenants);
                 //Console.Clear();
                 //Occupants.ViewInfo(role); // Ven Ecomment ni siya alisdi sa Receipt Transaction
-                Room.UpdateRoomStatus(roomCode, ref availableCtrLuxRom, ref availableCtrStandRom);
-                Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
+                Room.UpdateRoomStatus(roomCode, ref availableCtrLuxRom, ref availableCtrStandRom,false);
+                //Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
             }
 
         }
@@ -348,7 +396,10 @@ namespace HMIA
                             Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 0, 
                                 new string[] { "1", "2","3" });
                             Validate.InputCharacter(ref isValid, _char.ToString(), "PROCESS", fieldNumber, 1, 
-                                new string[] { "1", "2", "3", "4", "5", "6" });
+                                new string[] { "1", "2", "3", "4", "5", "6", "7" });
+
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "SEARCH BY", fieldNumber, 9,
+                                new string[] { "O", "R","D", "X"});
 
                             if (isValid) return (T)(object)_char;
                         }

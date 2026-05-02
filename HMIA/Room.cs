@@ -20,7 +20,7 @@ namespace HMIA
             //Console.WriteLine("\t└----------------------------------------------------┘");
         }
 
-        public static void DesignDraw(string[,] rooms, ref int availableCtr,string title)
+        public static void DesignDraw(string[,] rooms,string title)
         {
             string dash = string.Concat(Enumerable.Repeat("-", 111));
             string dash2 = string.Concat(Enumerable.Repeat("-", 30));
@@ -44,21 +44,14 @@ namespace HMIA
             string paxFor1 = (rooms[0,1] == "0")? goodFor1: stickHead;
             string perRate1 = (rooms[0, 1] == "0") ? rate1 : stickBody;
             string xcess1 = (rooms[0, 1] == "0") ? excess1 : stickLeg;
-            availableCtr = (rooms[0, 1] == "0") ? (availableCtr <4) ? availableCtr=availableCtr+1:availableCtr : availableCtr;
-
-
+            
             string paxFor2 = (rooms[1, 1] == "0") ? goodFor2 : stickHead;
             string perRate2 = (rooms[1, 1] == "0") ? rate2 : stickBody;
             string xcess2 = (rooms[1, 1] == "0") ? excess2 : stickLeg;
-            availableCtr = (rooms[1, 1] == "0") ? (availableCtr < 4) ? availableCtr = availableCtr + 1 : availableCtr : availableCtr;
 
             string paxFor3 = (rooms[2, 1] == "0") ? goodFor3 : stickHead;
             string perRate3 = (rooms[2, 1] == "0") ? rate3 : stickBody;
             string xcess3 = (rooms[2, 1] == "0") ? excess3 : stickLeg;
-            availableCtr = (rooms[2, 1] == "0") ? (availableCtr < 4) ? availableCtr = availableCtr + 1 : availableCtr : availableCtr;
-
-            availableCtr = (availableCtr < 0) ? 0 : availableCtr;
-
 
             Console.WriteLine("┌{0}┐", dash);
             string amenities = "";
@@ -90,13 +83,13 @@ namespace HMIA
             Console.WriteLine("└{0}┘", dash);
         }
         
-        public static void DisplayAvailableRooms(ref int availableCtrLuxRom, ref int availableCtrStandRom)
+        public static void DisplayAvailableRooms()
         {
             // LUXURY ROOMS
-            Room.DesignDraw(Program.luxuryRooms, ref availableCtrLuxRom,"LUXURY");
+            Room.DesignDraw(Program.luxuryRooms, "LUXURY");
         
             // STANDARD ROOMS
-            Room.DesignDraw(Program.standardRooms, ref availableCtrStandRom,"STANDARD");
+            Room.DesignDraw(Program.standardRooms,"STANDARD");
             
         }
 
@@ -146,7 +139,7 @@ namespace HMIA
 
         }
 
-        public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom)
+        public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom,bool increment)
         {
             string romType = roomCode.ToUpper().Substring(0, 1);
             if (romType == "L")
@@ -155,8 +148,17 @@ namespace HMIA
                 {
                     if (Program.luxuryRooms[i, 0].ToUpper() == roomCode.ToUpper())
                     {
-                        Program.luxuryRooms[i, 1] = "1";
-                        availableCtrLuxRom--;
+                        if (increment)
+                        {
+                            Program.luxuryRooms[i, 1] = "0";
+                            availableCtrLuxRom++;
+                        }
+                        else
+                        {
+                            Program.luxuryRooms[i, 1] = "1";
+                            availableCtrLuxRom--;
+                        }
+                        
                         break;
                     }
                 }
@@ -167,8 +169,17 @@ namespace HMIA
                 {
                     if (Program.standardRooms[i, 0].ToUpper() == roomCode.ToUpper())
                     {
-                        Program.standardRooms[i, 1] = "1";
-                        availableCtrStandRom--;
+                        if (increment)
+                        {
+                            Program.standardRooms[i, 1] = "0";
+                            availableCtrStandRom++;
+                        }
+                        else
+                        {
+                            Program.standardRooms[i, 1] = "1";
+                            availableCtrStandRom--;
+                        }
+                        
                         break;
                     }
                 }

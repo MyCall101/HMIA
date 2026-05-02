@@ -33,7 +33,7 @@ namespace HMIA
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
             {
-                int index = validChar.ToList().IndexOf(_value);
+                int index = validChar.ToList().IndexOf(_value.ToUpper());
                 if(index < 0)
                 {
                     Console.WriteLine($"\n\t-> {fieldName} : Invalid choice.");
