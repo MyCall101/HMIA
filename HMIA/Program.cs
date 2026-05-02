@@ -61,6 +61,11 @@ namespace HMIA
                 Console.Clear();
                 DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms, role);
             }
+            else if (role == '3')
+            {
+                Console.WriteLine("\n\tExiting system...\n");
+                Environment.Exit(0);
+            }
 
         }
 
@@ -131,10 +136,6 @@ namespace HMIA
                         
                     }
                     
-                }else if (role == '3')
-                {
-                    Console.WriteLine("\n\tExiting system...\n");
-                    Environment.Exit(0);
                 }
             } while (start);
 
@@ -152,7 +153,7 @@ namespace HMIA
                 Console.WriteLine("\t\t\t|[D] - DATES\t\t |");
                 Console.WriteLine("\t\t\t|[X] - BACK TO PROCESS   |");
                 Console.WriteLine("\t\t\t└------------------------┘");
-                char choose = DynamicInputs<char>("\tPlease choose search by: ",9); //Console.ReadLine().ToUpper();
+                char choose = DynamicInputs<char>("\tPlease choose search by: ",10); //Console.ReadLine().ToUpper();
                 if (char.ToUpper(choose) == 'O')
                 {
                     Console.Write("\n\tPlease enter Firstname or Lastname: ");
@@ -257,15 +258,13 @@ namespace HMIA
         {
             string[] addTenants;
             string fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ",2);
-
             string lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ",3);
-
-            string roomCode = DynamicInputs<string>("\n\tPlease choose room code: ",3);
-            int pax = DynamicInputs<int>("\n\tHow many pax: ",4);
-            string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ",5);
-            string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 6);
-            float payment = DynamicInputs<float>("\n\tPayment: ",7);
-            char confirm = DynamicInputs<char>("\n\tConfirm reserve booking (Y/N)?: ", 8);
+            string roomCode = DynamicInputs<string>("\n\tPlease choose room code: ",4);
+            int pax = DynamicInputs<int>("\n\tHow many pax: ",5);
+            string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ",6);
+            string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7);
+            float payment = DynamicInputs<float>("\n\tPayment: ",8);
+            char confirm = DynamicInputs<char>("\n\tConfirm reserve booking (Y/N)?: ", 9);
 
             if (char.ToUpper(confirm)=='Y')
             {
@@ -276,6 +275,7 @@ namespace HMIA
                 //Console.Clear();
                 //Occupants.ViewInfo(role); // Ven Ecomment ni siya alisdi sa Receipt Transaction
                 Room.UpdateRoomStatus(roomCode, ref availableCtrLuxRom, ref availableCtrStandRom,false);
+                Console.WriteLine("\n\t\t->Successfully Room Reserved.<-");
                 //Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
             }
 
@@ -397,8 +397,9 @@ namespace HMIA
                                 new string[] { "1", "2","3" });
                             Validate.InputCharacter(ref isValid, _char.ToString(), "PROCESS", fieldNumber, 1, 
                                 new string[] { "1", "2", "3", "4", "5", "6", "7" });
-
-                            Validate.InputCharacter(ref isValid, _char.ToString(), "SEARCH BY", fieldNumber, 9,
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "CONFIRMATION", fieldNumber, 9,
+                                new string[] { "Y", "N"});
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "SEARCH BY", fieldNumber, 10,
                                 new string[] { "O", "R","D", "X"});
 
                             if (isValid) return (T)(object)_char;
@@ -411,10 +412,13 @@ namespace HMIA
                     else
                     {
                         // Validation start here for strings
-                        Validate.InputLength( ref isValid,input, 4, 15, "Firstname",fieldNumber, 1);
-                        Validate.InputLength(ref isValid, input, 4, 15, "Lastname", fieldNumber, 2);
+                        Validate.InputLength( ref isValid,input, 4, 15, "FIRSTNAME",fieldNumber, 2);
+                        Validate.InputLength(ref isValid, input, 4, 15, "LASTNAME", fieldNumber, 3);
+                        Validate.InputCharacter(ref isValid, input, "ROOM CODE", fieldNumber, 4,
+                            new string[] {"L01", "L02" , "L03" , "S01" , "S02" , "S03" });
+                        Validate.CheckDate(ref isValid, input, "CHECK-IN", fieldNumber, 6);
+                        Validate.CheckDate(ref isValid, input, "CHECK-OUT", fieldNumber, 7);
 
-                        // don't forget the condition isValid
                         if (isValid) return (T)(object)input;
                     }
                 }
