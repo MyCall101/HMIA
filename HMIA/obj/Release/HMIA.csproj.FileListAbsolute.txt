@@ -1,0 +1,7 @@
+G:\CSharp\HMIA\HMIA\bin\Release\HMIA.exe.config
+G:\CSharp\HMIA\HMIA\bin\Release\HMIA.exe
+G:\CSharp\HMIA\HMIA\bin\Release\HMIA.pdb
+G:\CSharp\HMIA\HMIA\obj\Release\HMIA.csproj.AssemblyReference.cache
+G:\CSharp\HMIA\HMIA\obj\Release\HMIA.csproj.CoreCompileInputs.cache
+G:\CSharp\HMIA\HMIA\obj\Release\HMIA.exe
+G:\CSharp\HMIA\HMIA\obj\Release\HMIA.pdb

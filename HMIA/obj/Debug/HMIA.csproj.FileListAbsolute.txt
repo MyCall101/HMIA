@@ -6,3 +6,10 @@ D:\csharp\HMIA\HMIA\obj\Debug\HMIA.csproj.CoreCompileInputs.cache
 D:\csharp\HMIA\HMIA\obj\Debug\HMIA.exe
 D:\csharp\HMIA\HMIA\obj\Debug\HMIA.pdb
 D:\csharp\HMIA\HMIA\obj\Debug\HMIA.exe.config
+G:\CSharp\HMIA\HMIA\obj\Debug\HMIA.csproj.AssemblyReference.cache
+G:\CSharp\HMIA\HMIA\obj\Debug\HMIA.csproj.CoreCompileInputs.cache
+G:\CSharp\HMIA\HMIA\obj\Debug\HMIA.exe
+G:\CSharp\HMIA\HMIA\obj\Debug\HMIA.pdb
+G:\CSharp\HMIA\HMIA\bin\Debug\HMIA.exe.config
+G:\CSharp\HMIA\HMIA\bin\Debug\HMIA.exe
+G:\CSharp\HMIA\HMIA\bin\Debug\HMIA.pdb
