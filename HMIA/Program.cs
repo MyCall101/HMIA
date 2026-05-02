@@ -13,14 +13,14 @@ namespace HMIA
     internal class Program
     {
 
-        // Hourly Fix Rates
-        //public const float LUXTHREEHRSRATE = 500;
-        //public const float LUXFIVEHRSRATE = 800;
-        //public const float LUXTWELVEHRSRATE = 1200;
+        // PER NIGHT RATE
+        public const float LUXTHREEHRSRATE = 500;
+        public const float LUXFIVEHRSRATE = 800;
+        public const float LUXTWELVEHRSRATE = 1200;
 
-        //public const float STANDTHREEHRSRATE = 350;
-        //public const float STANDFIVEHRSRATE = 650;
-        //public const float STANDTWELVEHRSRATE = 1000;
+        public const float STANDTHREEHRSRATE = 350;
+        public const float STANDFIVEHRSRATE = 650;
+        public const float STANDTWELVEHRSRATE = 1000;
 
         // Variables
         public static string[,] luxuryRooms = new string[,] { };
@@ -35,7 +35,7 @@ namespace HMIA
 
             //Room.Sets(ref luxuryRooms, ref standardRooms);
             Room.SetDesigned(ref luxuryRooms, ref standardRooms);
-            DisplayWelcome();
+            
             DeterminedUser();
             //DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms);
 
@@ -46,14 +46,18 @@ namespace HMIA
 
         static void DeterminedUser()
         {
+            Console.Clear();
+            DisplayWelcome();
             string dash = String.Concat(Enumerable.Repeat("-",24));
             Console.WriteLine("\t\t\t┌{0}┐",dash);
             Console.WriteLine("\t\t\t|  [1] - FRONT DESK\t |");
             Console.WriteLine("\t\t\t|  [2] - GUEST\t\t |");
+            Console.WriteLine("\t\t\t|  [3] - EXIT\t\t |");
             Console.WriteLine("\t\t\t└{0}┘\n",dash);
             char role = DynamicInputs<char>("\n\tPlease Identify your self: ",0);
             if(role == '1' || role == '2')
             {
+                Console.Clear();
                 DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms, role);
             }
 
@@ -86,13 +90,15 @@ namespace HMIA
 
                 if (role == '1' || role == '2')
                 {
+                    Console.Clear();
                     if (process == '1' || (role == '1' && process=='2'))
                     {
-                        Console.Clear();
+                        
                         Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
                         if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
                         {
                             Process(role,ref tenants, process);
+                            
                         }
                     }
                     if (role == '1')
@@ -112,11 +118,16 @@ namespace HMIA
                     }
                     if ((role == '2' && process == '2') || (role == '1' && process == '6'))
                     {
+                        start = false;
                         //back to identify yourself
                         DeterminedUser();
-                        break;
+                        
                     }
                     
+                }else if (role == '3')
+                {
+                    Console.WriteLine("\n\tExiting system...");
+                    Environment.Exit(0);
                 }
             } while (start);
 
@@ -210,17 +221,15 @@ namespace HMIA
 
             if (char.ToUpper(confirm)=='Y')
             {
-                addTenants = new string[] {GetRole(role.ToString()),ProceDescription(process.ToString()), fname, lname,roomCode, pax.ToString(), checkIn, checkOut,
+                addTenants = new string[] {GetRole(role.ToString()),ProceDescription(process.ToString()), fname, lname,roomCode.ToUpper(), pax.ToString(), checkIn, checkOut,
                          payment.ToString()};
 
                 Occupants.AddNew(ref tenants, addTenants);
-                Occupants.ViewInfo(role); // Ven Ecomment ni siya alisdi sa Receipt Transaction
+                //Console.Clear();
+                //Occupants.ViewInfo(role); // Ven Ecomment ni siya alisdi sa Receipt Transaction
+                Room.UpdateRoomStatus(roomCode, ref availableCtrLuxRom, ref availableCtrStandRom);
+                Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
             }
-
-            //Room.UpdateRoomStatus(roomType, roomNumber);
-            Room.UpdateRoomStatus(roomCode);
-            Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
-            
 
         }
         
@@ -336,7 +345,8 @@ namespace HMIA
                         if (char.TryParse(input, out _char))
                         {
                             // // Validation start here for strings
-                            Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 0, new string[] { "1", "2" });
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 0, 
+                                new string[] { "1", "2","3" });
                             Validate.InputCharacter(ref isValid, _char.ToString(), "PROCESS", fieldNumber, 1, 
                                 new string[] { "1", "2", "3", "4", "5", "6" });
 

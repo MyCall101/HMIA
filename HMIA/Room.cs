@@ -44,18 +44,18 @@ namespace HMIA
             string paxFor1 = (rooms[0,1] == "0")? goodFor1: stickHead;
             string perRate1 = (rooms[0, 1] == "0") ? rate1 : stickBody;
             string xcess1 = (rooms[0, 1] == "0") ? excess1 : stickLeg;
-            availableCtr = (rooms[0, 1] == "0") ? availableCtr++ : availableCtr--;
+            availableCtr = (rooms[0, 1] == "0") ? (availableCtr <4) ? availableCtr=availableCtr+1:availableCtr : availableCtr;
 
 
             string paxFor2 = (rooms[1, 1] == "0") ? goodFor2 : stickHead;
             string perRate2 = (rooms[1, 1] == "0") ? rate2 : stickBody;
             string xcess2 = (rooms[1, 1] == "0") ? excess2 : stickLeg;
-            availableCtr = (rooms[1, 1] == "0") ? availableCtr++ : availableCtr--;
+            availableCtr = (rooms[1, 1] == "0") ? (availableCtr < 4) ? availableCtr = availableCtr + 1 : availableCtr : availableCtr;
 
             string paxFor3 = (rooms[2, 1] == "0") ? goodFor3 : stickHead;
             string perRate3 = (rooms[2, 1] == "0") ? rate3 : stickBody;
             string xcess3 = (rooms[2, 1] == "0") ? excess3 : stickLeg;
-            availableCtr = (rooms[2, 1] == "0") ? availableCtr++ : availableCtr--;
+            availableCtr = (rooms[2, 1] == "0") ? (availableCtr < 4) ? availableCtr = availableCtr + 1 : availableCtr : availableCtr;
 
             availableCtr = (availableCtr < 0) ? 0 : availableCtr;
 
@@ -68,7 +68,7 @@ namespace HMIA
                 amenities = "Sheets,mattresses & curated pillow menus.Rain showers & deep soaking tubs." +
                             "Smart room controls (voice)";
             }
-            else
+            else if(title == "STANDARD")
             {
                 Console.WriteLine("|\t\t\t\t\t\t{0} ROOM\t\t\t\t\t\t\t|", title);
                 amenities = "Clean linens, basic mattress, 1–2 pillows. Shower/tub combo." +
@@ -90,68 +90,14 @@ namespace HMIA
             Console.WriteLine("└{0}┘", dash);
         }
         
-
-        public static void Draw(string[,] rooms, ref int availableCtr, int dispRowCtr)
-        {
-            string dash = string.Concat(Enumerable.Repeat("-", 37));
-            //Console.WriteLine("\t┌-------------------------------------┐");
-            Console.WriteLine("\t┌{0}┐",dash);
-            for (int n = 0; n < rooms.GetLength(0); n++)
-            {
-                if (dispRowCtr <= 5)
-                {
-                    if (rooms[n, 1] == "0")
-                    {
-
-                        //Console.Write("\t| " + (Convert.ToInt32(rooms[n, 0]).ToString("00")) + " |");
-                        Console.Write("\t| " + rooms[n, 0] + " |");
-
-                        dispRowCtr++;
-                        availableCtr++;
-                    }
-                    else
-                    {
-                        Console.Write("\t| OC |");
-                        dispRowCtr++;
-                        availableCtr--;
-                    }
-                }
-                if (dispRowCtr > 5)
-                {
-                    dispRowCtr = 1;
-                    if (n < 5)
-                    {
-                        //Console.WriteLine("\n\t|-------------------------------------|");
-                        Console.WriteLine("\n\t|{0}|",dash);
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                    }
-
-                }
-
-            }
-            if (availableCtr == 0)
-                Console.WriteLine("\t|\tNo Rooms Available. \t     |");
-
-            //Console.WriteLine("\t└-------------------------------------┘");
-            Console.WriteLine("\t└{0}┘",dash);
-        }
         public static void DisplayAvailableRooms(ref int availableCtrLuxRom, ref int availableCtrStandRom)
         {
             // LUXURY ROOMS
-            //Console.WriteLine("\n\tAvailable Luxury Rooms:");
-            //Console.WriteLine("\n\tAmeties: Free Tissue,");
-            //int ctr = 1;
             Room.DesignDraw(Program.luxuryRooms, ref availableCtrLuxRom,"LUXURY");
-            //DrawRooms(Program.luxuryRooms, ref availableCtrLuxRom, ctr);
-
+        
             // STANDARD ROOMS
-            //Console.WriteLine("\n\tAvailable Standard Rooms:");
             Room.DesignDraw(Program.standardRooms, ref availableCtrStandRom,"STANDARD");
-            //DrawRooms(Program.standardRooms, ref availableCtrStandRom, ctr);
-
+            
         }
 
         public static void SetDesigned(ref string[,] luxuryRooms, ref string[,] standardRooms)
@@ -200,7 +146,7 @@ namespace HMIA
 
         }
 
-        public static void UpdateRoomStatus(string roomCode)
+        public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom)
         {
             string romType = roomCode.ToUpper().Substring(0, 1);
             if (romType == "L")
@@ -210,6 +156,7 @@ namespace HMIA
                     if (Program.luxuryRooms[i, 0].ToUpper() == roomCode.ToUpper())
                     {
                         Program.luxuryRooms[i, 1] = "1";
+                        availableCtrLuxRom--;
                         break;
                     }
                 }
@@ -221,6 +168,7 @@ namespace HMIA
                     if (Program.standardRooms[i, 0].ToUpper() == roomCode.ToUpper())
                     {
                         Program.standardRooms[i, 1] = "1";
+                        availableCtrStandRom--;
                         break;
                     }
                 }
