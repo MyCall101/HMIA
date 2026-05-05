@@ -57,7 +57,37 @@ namespace HMIA
                     Console.WriteLine("\n\t-> {0} : Invalid date.",fieldName);
                     isValid = false;
                 }
-
+            }
+            if (_value.Trim() == "") isValid = false;
+        }
+        public static void RoomAvailable(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber)
+        {
+            if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
+            {
+                bool isAvailable = true;
+                for(int i = 0; i < Program.luxuryRooms.GetLength(0); i++)
+                {
+                    if (Program.luxuryRooms[i,0].ToString().ToUpper() == _value.ToUpper() &&
+                        Program.luxuryRooms[i,1] != "0")
+                    {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+                if (isAvailable)
+                {
+                    for (int k = 0; k < Program.standardRooms.GetLength(0); k++)
+                    {
+                        if (Program.standardRooms[k, 0].ToString().ToUpper() == _value.ToUpper() &&
+                            Program.standardRooms[k, 1] != "0")
+                        {
+                            isAvailable = false;
+                            break;
+                        }
+                    }
+                }
+                if (!isAvailable)
+                    Console.WriteLine("\n\t-> {0} : Room not available.",fieldName);
             }
             if (_value.Trim() == "") isValid = false;
         }

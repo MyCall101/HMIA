@@ -139,7 +139,7 @@ namespace HMIA
 
         }
 
-        public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom,bool increment)
+        public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom,bool available)
         {
             string romType = roomCode.ToUpper().Substring(0, 1);
             if (romType == "L")
@@ -148,7 +148,7 @@ namespace HMIA
                 {
                     if (Program.luxuryRooms[i, 0].ToUpper() == roomCode.ToUpper())
                     {
-                        if (increment)
+                        if (available)
                         {
                             Program.luxuryRooms[i, 1] = "0";
                             availableCtrLuxRom++;
@@ -169,7 +169,7 @@ namespace HMIA
                 {
                     if (Program.standardRooms[i, 0].ToUpper() == roomCode.ToUpper())
                     {
-                        if (increment)
+                        if (available)
                         {
                             Program.standardRooms[i, 1] = "0";
                             availableCtrStandRom++;
