@@ -118,10 +118,12 @@ namespace HMIA
                         else if (process == '4')
                         {
                             //VIEW ALL OCCUPANTS
+                            Occupants.ViewInfo(role);
                         }
                         else if (process == '5')
                         {
                             //VIEW AVAILABLE ROOM
+                            Room.DisplayAvailableRooms();
                         }
                         else if (process == '6')
                         {
@@ -167,9 +169,9 @@ namespace HMIA
                 }
                 else if (char.ToUpper(choose) == 'D')
                 {
-                    Console.Write("\n\tCheck In date: ");
+                    Console.Write("\n\tCheck In date (MM-dd-yyyy): ");
                     string date1 = Console.ReadLine();
-                    Console.Write("\n\tCheck Out date: ");
+                    Console.Write("\n\tCheck Out date (MM-dd-yyyy): ");
                     string date2 = Console.ReadLine();
                     SearchBy(choose, date1,date2, role);
                 }
@@ -189,6 +191,7 @@ namespace HMIA
             bool found = false;
             if (tenants.GetLength(0) > 0)
             {
+                string[,] temp = new string[tenants.GetLength(0), 9];
                 for (int i = 0; i < tenants.GetLength(0); i++)
                 {
                     if (by.ToString().ToUpper() == "D")
@@ -201,20 +204,77 @@ namespace HMIA
                         if (valid1 && valid2 && valid3 && valid4) {
                             if (_checkin == _date1 && _checkout == _date2)
                             {
-                                Occupants.ViewInfo(role, by.ToString(), i);
+                                //Occupants.ViewInfo(role, by.ToString(), i);
+                                temp[i, 0] = tenants[i, 0];
+                                temp[i, 1] = tenants[i, 1];
+                                temp[i, 2] = tenants[i, 2];
+                                temp[i, 3] = tenants[i, 3];
+                                temp[i, 4] = tenants[i, 4];
+                                temp[i, 5] = tenants[i, 5];
+                                temp[i, 6] = tenants[i, 6];
+                                temp[i, 7] = tenants[i, 7];
+                                temp[i, 8] = tenants[i, 8];
                                 found = true;
-                                break;
+                                //break;
                             }
                         }
                         
                     }
                 }
-                if (!found)
-                    Console.WriteLine("\n\t No Record Found.");
+
+                if (found)
+                {
+                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 108)) : String.Concat(Enumerable.Repeat("-", 82));
+                    Console.WriteLine("\n\t┌{0}┐", dash);
+                    
+                    if (role == '1')
+                    {
+                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAYMENT", "PROCESS_TYPE", "ROLE");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAYMENT");
+
+                    }
+                    Console.WriteLine("\t|{0}|", dash);
+                    for (int n=0;n<temp.GetLength(0);n++)
+                    {
+                        if (temp[n,0]!=null)
+                        {
+                            if (role == '1')
+                            {
+                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
+                                    temp[n, 2] + " " + temp[n, 3], temp[n, 4],
+                                    temp[n, 5], temp[n, 6], temp[n, 7],
+                                    temp[n, 8], temp[n, 1], temp[n, 0]);
+                            }
+                            else
+                            {
+                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
+                                    temp[n, 2] + " " + temp[n, 3], temp[n, 4],
+                                    temp[n, 5], temp[n, 6], temp[n, 7],
+                                    temp[n, 8]);
+                            }
+
+                            if (n != temp.GetLength(0) - 1)
+                                Console.WriteLine("\t|{0}|", dash);
+                        }
+                        
+                    }
+                    Console.WriteLine("\t└{0}┘\n", dash);
+                }
+                else
+                {
+                    Console.WriteLine("\n\t -> No Record Found.");
+                }
+                    
             }
             else
             {
-                Console.WriteLine("\n\t No Data.");
+                Console.WriteLine("\n\t -> No Data.");
             }
         }
 
@@ -246,10 +306,10 @@ namespace HMIA
                     
                 }
                 if(!found)
-                    Console.WriteLine("\n\t No Record Found.");
+                    Console.WriteLine("\n\t -> No Record Found.");
             }
             else{
-                Console.WriteLine("\n\t No Data.");
+                Console.WriteLine("\n\t -> No Data.");
             }
         }
 
@@ -288,9 +348,9 @@ namespace HMIA
                     {
                         Console.Clear();
                         Console.WriteLine("\n\t\t┌{0}┐", dash);
-                        Console.WriteLine("\t\t|[1] - UPDATE BOOKING\t |");
-                        Console.WriteLine("\t\t|[2] - BOOK AGAIN\t |");
-                        Console.WriteLine("\t\t|[3] - EXIT\t |");
+                        Console.WriteLine("\t\t|{0,-25}|", "[1] - UPDATE BOOKING");
+                        Console.WriteLine("\t\t|{0,-25}|", "[2] - BOOK AGAIN");
+                        Console.WriteLine("\t\t|{0,-25}|", "[3] - EXIT");
                         Console.WriteLine("\t\t└{0}┘", dash);
 
                         char choose = DynamicInputs<char>("\n\tChoose action: ", 12);
@@ -301,7 +361,9 @@ namespace HMIA
                                 start = false;
                                 break;
                             case '2':
+                                start = true;
                                 isAsking = false;
+                                Room.DisplayAvailableRooms();
                                 break;
                             case '3':
                                 start = false;
@@ -329,12 +391,12 @@ namespace HMIA
                 Console.WriteLine("\n\t\t┌{0}┐", dash);
                 Console.WriteLine("\t\t|{0,-25}|","UPDATE" );
                 Console.WriteLine("\t\t|{0}|", dash);
-                Console.WriteLine("\t\t|[1] - FIRST NAME\t |");
-                Console.WriteLine("\t\t|[2] - LAST NAME\t |");
-                Console.WriteLine("\t\t|[3] - ROOM NUMBER\t |");
-                Console.WriteLine("\t\t|[4] - NUMBER OF PAX\t |");
-                Console.WriteLine("\t\t|[5] - CHECK-IN & OUT\t |");
-                Console.WriteLine("\t\t|[6] - EXIT\t |");
+                //Console.WriteLine("\t\t|{0,-25}|", "[1] - FIRST NAME");
+                //Console.WriteLine("\t\t|{0,-25}|", "[2] - LAST NAME");
+                //Console.WriteLine("\t\t|{0,-25}|", "[3] - ROOM NUMBER");
+                //Console.WriteLine("\t\t|{0,-25}|", "[4] - NUMBER OF PAX");
+                //Console.WriteLine("\t\t|{0,-25}|", "[5] - CHECK-IN & OUT");
+                //Console.WriteLine("\t\t|{0,-25}|", "[6] - EXIT");
                 Console.WriteLine("\t\t└{0}┘", dash);
 
                 int index = tenants.GetLength(0)-1;
