@@ -128,6 +128,7 @@ namespace HMIA
 
         }
 
+
         public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom,bool available)
         {
             string romType = roomCode.ToUpper().Substring(0, 1);

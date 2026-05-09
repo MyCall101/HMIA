@@ -107,7 +107,7 @@ namespace HMIA
             if (_value.Trim() == "") isValid = false;
         }
 
-        public static void RoomAvailable(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber)
+        public static void RoomAvailable(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber,bool occupant = false)
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
             {
@@ -134,14 +134,19 @@ namespace HMIA
                     }
                 }
 
-                if (!isAvailable)
+                if (!isAvailable && !occupant)
                 {
                     Console.WriteLine("\n\t-> {0} : Room not available.", fieldName);
+                    isValid = false;
+                }else if (isAvailable && occupant)
+                {
+                    Console.WriteLine("\n\t-> {0} : No occupants.", fieldName);
                     isValid = false;
                 }
                     
             }
             if (_value.Trim() == "") isValid = false;
         }
+        
     }
 }

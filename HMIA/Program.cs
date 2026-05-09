@@ -28,7 +28,7 @@ namespace HMIA
         // Variables
         public static string[,] luxuryRooms = new string[,] { };
         public static string[,] standardRooms = new string[,] { };
-        public static string[,] tenants = new string[0, 9];
+        public static string[,] tenants = new string[0, 10];
         public static int availableCtrLuxRom = 3;
         public static int availableCtrStandRom = 3;
 
@@ -130,6 +130,8 @@ namespace HMIA
                         else if (process == '6')
                         {
                             //CHECK OUT
+                            RoomCheckOut();
+                            
                         }
                     }
                     if ((role == '2' && process == '2') || (role == '1' && process == '7'))
@@ -143,6 +145,16 @@ namespace HMIA
                 }
             } while (start);
 
+        }
+
+        static void RoomCheckOut()
+        {
+            string roomNumber = DynamicInputs<string>("\n\tEnter room number: ", 4,"","",true);
+            tenants = Occupants.CheckOUT(roomNumber);
+            Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom,true);
+            DisplayFarewell();
+            Console.WriteLine("\n\tPress anykey to continue...");
+            Console.ReadKey();
         }
         
         static void SearchMethod(ref string[,] tenants, ref string[,] luxuryRooms, ref string[,] standardRooms, char role)
@@ -165,12 +177,13 @@ namespace HMIA
                     string name = Console.ReadLine();
                     SearchBy(choose, name,role);
                     Console.WriteLine("\n\tPress any key to continue...");
-                }else if (char.ToUpper(choose) == 'R')
-                {
-                    Console.Write("\n\tPlease enter the Room Code: ");
-                    string number = Console.ReadLine();
-                    SearchBy(choose, number,role);
                 }
+                //else if (char.ToUpper(choose) == 'R')
+                //{
+                //    Console.Write("\n\tPlease enter the Room Code: ");
+                //    string number = Console.ReadLine();
+                //    SearchBy(choose, number,role);
+                //}
                 else if (char.ToUpper(choose) == 'D')
                 {
                     Console.Write("\n\tCheck In date (MM-dd-yyyy): ");
@@ -220,6 +233,7 @@ namespace HMIA
                                 temp[i, 6] = tenants[i, 6];
                                 temp[i, 7] = tenants[i, 7];
                                 temp[i, 8] = tenants[i, 8];
+                                temp[i, 9] = tenants[i, 9];
                                 found = true;
                                 //break;
                             }
@@ -230,19 +244,19 @@ namespace HMIA
 
                 if (found)
                 {
-                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 108)) : String.Concat(Enumerable.Repeat("-", 82));
+                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 118)) : String.Concat(Enumerable.Repeat("-", 92));
                     Console.WriteLine("\n\t┌{0}┐", dash);
                     
                     if (role == '1')
                     {
-                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAYMENT", "PROCESS_TYPE", "ROLE");
+                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "PROCESS_TYPE", "ROLE");
 
                     }
                     else
                     {
-                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAYMENT");
+                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL");
 
                     }
                     Console.WriteLine("\t|{0}|", dash);
@@ -252,17 +266,18 @@ namespace HMIA
                         {
                             if (role == '1')
                             {
-                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-14}{7,-12}|",
+                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|",
                                     temp[n, 2] + " " + temp[n, 3], temp[n, 4],
                                     temp[n, 5], temp[n, 6], temp[n, 7],
-                                    temp[n, 8], temp[n, 1], temp[n, 0]);
+                                    "₱" + temp[n, 8], "₱" + temp[n, 9], 
+                                    temp[n, 1], temp[n, 0]);
                             }
                             else
                             {
-                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}|",
+                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
                                     temp[n, 2] + " " + temp[n, 3], temp[n, 4],
                                     temp[n, 5], temp[n, 6], temp[n, 7],
-                                    temp[n, 8]);
+                                    "₱" + temp[n, 8], "₱" + temp[n, 9]);
                             }
 
                             if (n != temp.GetLength(0) - 1)
@@ -301,16 +316,6 @@ namespace HMIA
                             break;
                         }
                     }
-                    //else if (by.ToString().ToUpper() == "R")
-                    //{
-                    //    if (value.ToUpper() == tenants[i,4].ToUpper())
-                    //    {
-                    //        Occupants.ViewInfo(role,by.ToString(), i);
-                    //        found = true;
-                    //        break;
-                    //    }
-                        
-                    //}
                     
                 }
                 if(!found)
@@ -347,7 +352,7 @@ namespace HMIA
                     if (!Occupants.BookExist(fname,lname,checkIn,checkOut))
                     {
                         addTenants = new string[] {GetRole(role.ToString()),ProcDescription(process.ToString()), fname, lname,roomNumber.ToUpper(), pax.ToString(), checkIn, checkOut,
-                         payment.ToString()};
+                         payment.ToString(),amount.ToString()};
 
                         Occupants.AddNew(ref tenants, addTenants);
                         //Console.Clear();
@@ -556,6 +561,16 @@ namespace HMIA
             Console.WriteLine("\t|\t\tWhere comfort feels like home.\t\t|");
             Console.WriteLine("\t└{0}┘\n",dash);
         }
+        public static void DisplayFarewell()
+        {
+            string dash = string.Concat(Enumerable.Repeat("-", 55));
+            Console.WriteLine("\t┌{0}┐", dash);
+            Console.WriteLine("\t|\t\t\t  THANK YOU FOR STAYING\t\t|");//TO LAAR's HOTEL!
+            Console.WriteLine("\t|\t\t\t  At LAAR's HOTEL!\t\t|");
+            Console.WriteLine("\t|-------------------------------------------------------|");
+            Console.WriteLine("\t|\t\t\tHave a safe trip.\t\t|");
+            Console.WriteLine("\t└{0}┘\n", dash);
+        }
 
         // **************** RETURN METHODS ****************
         public static float GetAmountToPay(string room,int duration,int _pax)
@@ -649,7 +664,7 @@ namespace HMIA
             return rmType;
         }
 
-        static T DynamicInputs<T>(string prompt,int fieldNumber,string value="",string process = "")
+        static T DynamicInputs<T>(string prompt,int fieldNumber,string value="",string process = "",bool occupant = false)
         {
             
             while (true)
@@ -755,8 +770,15 @@ namespace HMIA
 
                         Validate.InputCharacter(ref isValid, input, "ROOM NUMBER", fieldNumber, 4,//room number
                             new string[] {"L01", "L02" , "L03" , "S01" , "S02" , "S03" });
-                        Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4);//room number
-
+                        if (!occupant)
+                        {
+                            Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4);//room number
+                        }
+                        else
+                        {
+                            Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4, occupant);//room number
+                        }
+                        
                         Validate.CheckDate(ref isValid, input, "CHECK-IN", fieldNumber, 6);//check in
                         Validate.CheckInOut(ref isValid, input,formattedDate, "CHECK-IN", fieldNumber, 6);//check in
 
