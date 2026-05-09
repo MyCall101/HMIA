@@ -29,6 +29,97 @@ namespace HMIA
 
             tenants = newTenants;
         }
+
+        public static void Receipt(string fname,string lname,string room,int pax,
+                                string checkIn,string checkOut,int duration,float payment)
+        {
+            string dash = string.Concat(Enumerable.Repeat("-", 40));
+            float totalAmount = Program.GetAmountToPay(room,duration,pax);
+            float excessAmount = 0;
+            float perNightRate = 0;
+            float paxExcessRate = 0;
+            int p = 0;
+            
+            
+
+            int index = Room.Index(room,Program.luxuryRooms);
+            if (index >-1)
+            {
+                int capacity = int.Parse(Program.luxuryRooms[index, 2]);
+                perNightRate = float.Parse(Program.luxuryRooms[index, 4].ToString().Replace("₱", "").Replace(",", ""));
+                paxExcessRate = float.Parse(Program.luxuryRooms[index, 5].ToString().Replace("₱", "").Replace(",", ""));
+
+                p = pax;
+                if (pax > capacity) 
+                {
+                    p = pax - capacity;
+                    excessAmount = p * paxExcessRate;
+                } 
+                
+
+            }
+            else
+            {
+                index = Room.Index(room, Program.standardRooms);
+                if (index > -1)
+                {
+                    int capacity = int.Parse(Program.standardRooms[index, 2]);
+                    perNightRate = float.Parse(Program.standardRooms[index, 4].ToString().Replace("₱", "").Replace(",", ""));
+                    paxExcessRate = float.Parse(Program.standardRooms[index, 5].ToString().Replace("₱", "").Replace(",", ""));
+
+                    if (pax > capacity)
+                    {
+                        p = pax - capacity;
+                        excessAmount = p * paxExcessRate;
+                    }
+                }
+                    
+            }
+            
+
+            if(index > -1)
+            {
+                
+                Console.WriteLine("\t┌{0,-39}┐", dash);
+                Console.WriteLine("\t|\t  LAAR's HOTEL!\t\t\t |");
+                Console.WriteLine("\t|\tTRANSACTION RECEIPT.\t\t |");
+                Console.WriteLine("\t|{0,-39}|", dash);
+                Console.WriteLine("\t|Name: {0,-34}|", fname + " " + lname);
+                Console.WriteLine("\t|Room: {0,-34}|", room.ToUpper());
+                Console.WriteLine("\t|Number of Pax: {0,-25}|", pax);
+                Console.WriteLine("\t|Check In: {0,-30}|", checkIn);
+                Console.WriteLine("\t|Check Out: {0,-29}|", checkOut);
+                Console.WriteLine("\t|Excess pax: {0,-28}|", excessAmount.ToString("N0"));
+                Console.WriteLine("\t|Room per night: {0,-24}|", perNightRate.ToString("N0"));
+                Console.WriteLine("\t|Days stay: {0,-29}|", duration.ToString("N0"));
+                Console.WriteLine("\t|{0,-39}|", dash);
+                Console.WriteLine("\t|\tTotal : {0,-25}|", totalAmount.ToString("N0"));
+                Console.WriteLine("\t|\tPay : {0,-27}|", payment.ToString("N0"));
+                Console.WriteLine("\t|\tChange : {0,-24}|", (payment - totalAmount).ToString("N0"));
+                Console.WriteLine("\t└{0,-39}┘",dash );
+            }
+
+            
+        }
+
+        public static bool BookExist(string fname,string lname,string checkIn,string checkOut)
+        {
+            bool isExist = false;
+            if (Program.tenants.GetLength(0)>0)
+            {
+                for (int i=0;i<Program.tenants.GetLength(0);i++)
+                {
+                    if (fname == Program.tenants[i, 2] && lname == Program.tenants[i, 3] &&
+                        checkIn == Program.tenants[i, 6] && checkOut == Program.tenants[i, 7])
+                    {
+                        isExist = true; break;
+                    }
+                }
+            }
+
+            return isExist;
+        }
+
         public static void ViewInfo(char role,string searchBy = "", int index = 0)
         {
 

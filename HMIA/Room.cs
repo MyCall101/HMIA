@@ -9,17 +9,6 @@ namespace HMIA
     internal class Room
     {
 
-        public static void DisplayHrsRates()
-        {
-            //Console.WriteLine("\t┌----------------------------------------------------┐");
-            //Console.WriteLine("\t|\t\tLUXURY ROOM HOURS RATES\t\t     |");
-            //Console.WriteLine("\t| 3HRS - ₱" + (Program.LUXTHREEHRSRATE.ToString("F2")) + " | 5HRS - ₱" + (Program.LUXFIVEHRSRATE.ToString("F2")) + " | 12HRS - ₱" + (Program.LUXTWELVEHRSRATE.ToString("F2")) + " |");
-            //Console.WriteLine("\t|----------------------------------------------------|");
-            //Console.WriteLine("\t|\t\tSTANDARD ROOM HOURS RATES\t     |");
-            //Console.WriteLine("\t| 3HRS - ₱" + (Program.STANDTHREEHRSRATE.ToString("F2")) + " | 5HRS - ₱" + (Program.STANDFIVEHRSRATE.ToString("F2")) + " | 12HRS - ₱" + (Program.STANDTWELVEHRSRATE.ToString("F2")) + " |");
-            //Console.WriteLine("\t└----------------------------------------------------┘");
-        }
-
         public static void DesignDraw(string[,] rooms,string title)
         {
             string dash = string.Concat(Enumerable.Repeat("-", 111));
@@ -37,9 +26,9 @@ namespace HMIA
             string rate2 = "Rate per night: " + rooms[1, 4];
             string rate3 = "Rate per night: " + rooms[2, 4];
 
-            string excess1 = "Excess rate: " + rooms[0, 5];
-            string excess2 = "Excess rate: " + rooms[1, 5];
-            string excess3 = "Excess rate: " + rooms[2, 5];
+            string excess1 = "Excess pax: " + rooms[0, 5];
+            string excess2 = "Excess pax: " + rooms[1, 5];
+            string excess3 = "Excess pax: " + rooms[2, 5];
 
             string paxFor1 = (rooms[0,1] == "0")? goodFor1: stickHead;
             string perRate1 = (rooms[0, 1] == "0") ? rate1 : stickBody;
@@ -101,7 +90,7 @@ namespace HMIA
                             "Smart room controls (voice)","₱1,500","₱1,000"},
                 { "L02","0","2","Sheets,mattresses & curated pillow menus.Rain showers & deep soaking tubs." +
                             "Smart room controls (voice)","₱3,000","₱1,000"},
-                { "L03","0","3-5","Sheets,mattresses & curated pillow menus.Rain showers & deep soaking tubs." +
+                { "L03","0","5","Sheets,mattresses & curated pillow menus.Rain showers & deep soaking tubs." +
                             "Smart room controls (voice)","₱5,000","₱1,000"}
             };
 
@@ -117,7 +106,7 @@ namespace HMIA
                                           "Standard TV, basic Wi-Fi, and telephone.",
                                           "₱1,600",
                                           "₱500"},
-                { "S03","0","3-5","Clean linens, basic mattress, 1–2 pillows." +
+                { "S03","0","5","Clean linens, basic mattress, 1–2 pillows." +
                                           "Shower/tub combo, basic soap, shampoo, and hairdryer." +
                                           "Standard TV, basic Wi-Fi, and telephone.",
                                           "₱3,200",
@@ -185,34 +174,18 @@ namespace HMIA
                 }
             }
         }
-        //public static void UpdateRoomStatus(char rType, int roomNum)
-        //{
 
-
-        //    Console.WriteLine("\n\t***ROOMS STATUS UPDATE***");
-        //    if (rType == 'L' || rType == 'l')
-        //    {
-        //        for (int i = 0; i < Program.luxuryRooms.GetLength(0); i++)
-        //        {
-        //            if (Program.luxuryRooms[i, 0] == roomNum.ToString())
-        //            {
-        //                Program.luxuryRooms[i, 1] = "1";
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    else if (rType == 'S' || rType == 's')
-        //    {
-        //        for (int i = 0; i < Program.standardRooms.GetLength(0); i++)
-        //        {
-        //            if (Program.standardRooms[i, 0] == roomNum.ToString())
-        //            {
-        //                Program.standardRooms[i, 1] = "1";
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
+        public static int Index(string roomNumber,string[,] roomType)
+        {
+            if (roomNumber != "") {
+                for (int i = 0; i<roomType.GetLength(0);i++)
+                {
+                    if (roomType[i, 0] == roomNumber.ToString().ToUpper())
+                        return i;
+                }
+            }
+            return -1;
+        }
+        
     }
 }

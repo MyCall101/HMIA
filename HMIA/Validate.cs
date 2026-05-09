@@ -60,6 +60,48 @@ namespace HMIA
             }
             if (_value.Trim() == "") isValid = false;
         }
+
+        public static void CheckInOut(ref bool isValid, string _value, string _value2, string fieldName, int fieldNumber, int defFieldNumber)
+        {
+            if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
+            {
+                DateTime _date1 = DateTime.Parse(_value);
+                DateTime _date2 = DateTime.Parse(_value2);
+
+                if(_date1 < _date2 || (fieldName == "CHECK-OUT" && _date1 <= _date2))
+                {
+                    if(fieldName == "CHECK-OUT")
+                    {
+                        Console.WriteLine("\n\t-> {0} : date should be future dates.", fieldName);
+                        isValid = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n\t-> {0} : date should be current or future dates.", fieldName);
+                        isValid = false;
+                    }
+                    
+                }
+            }
+            if (_value.Trim() == "") isValid = false;
+        }
+
+        public static void Payment(ref bool isValid, string _value, string _value2, string fieldName, int fieldNumber, int defFieldNumber)
+        {
+            if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
+            {
+                float v1 = float.Parse(_value);
+                float v2 = float.Parse(_value2);
+
+                if( v1 < v2)
+                {
+                    Console.WriteLine("\n\t-> {0} : Check amount.", fieldName);
+                    isValid = false;
+                }
+            }
+            if (_value.Trim() == "") isValid = false;
+        }
+
         public static void RoomAvailable(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber)
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
@@ -86,8 +128,13 @@ namespace HMIA
                         }
                     }
                 }
+
                 if (!isAvailable)
-                    Console.WriteLine("\n\t-> {0} : Room not available.",fieldName);
+                {
+                    Console.WriteLine("\n\t-> {0} : Room not available.", fieldName);
+                    isValid = false;
+                }
+                    
             }
             if (_value.Trim() == "") isValid = false;
         }
