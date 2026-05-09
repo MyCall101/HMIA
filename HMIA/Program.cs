@@ -150,19 +150,21 @@ namespace HMIA
             bool isSearch = true;
             do
             {
-                
-                Console.WriteLine("\t\t\t┌------------------------┐");
-                Console.WriteLine("\t\t\t|[O] - OCCUPANTS\t |");
-                Console.WriteLine("\t\t\t|[R] - ROOM CODE\t |");
+                Console.Clear();
+                string dash = string.Concat(Enumerable.Repeat("-", 28));
+                Console.WriteLine("\t\t\t┌{0}┐",dash);
+                Console.WriteLine("\t\t\t|[O] - OCCUPANTS/ROOM NUMBER |");
+                //Console.WriteLine("\t\t\t|[R] - ROOM CODE\t |");
                 Console.WriteLine("\t\t\t|[D] - DATES\t\t |");
                 Console.WriteLine("\t\t\t|[X] - BACK TO PROCESS   |");
-                Console.WriteLine("\t\t\t└------------------------┘");
+                Console.WriteLine("\t\t\t└{0}┘");
                 char choose = DynamicInputs<char>("\tPlease choose search by: ",10); //Console.ReadLine().ToUpper();
                 if (char.ToUpper(choose) == 'O')
                 {
-                    Console.Write("\n\tPlease enter Firstname or Lastname: ");
+                    Console.Write("\n\tPlease enter Firstname or Lastname or Room number: ");
                     string name = Console.ReadLine();
                     SearchBy(choose, name,role);
+                    Console.WriteLine("\n\tPress any key to continue...");
                 }else if (char.ToUpper(choose) == 'R')
                 {
                     Console.Write("\n\tPlease enter the Room Code: ");
@@ -183,7 +185,9 @@ namespace HMIA
                     isSearch = false;
                     DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms, role);
                 }
-                
+
+                Console.ReadKey();
+
             } while (isSearch);
             
         }
@@ -289,22 +293,24 @@ namespace HMIA
                 {
                     if(by.ToString().ToUpper() == "O")
                     {
-                        if (value.ToUpper() == tenants[i, 2].ToUpper() || value.ToUpper() == tenants[i, 3].ToUpper())
+                        if (value.ToUpper() == tenants[i, 2].ToUpper() || value.ToUpper() == tenants[i, 3].ToUpper() ||
+                            value.ToUpper() == tenants[i, 4].ToUpper())
                         {
                             Occupants.ViewInfo(role,by.ToString(),i);
                             found = true;
                             break;
                         }
-                    }else if (by.ToString().ToUpper() == "R")
-                    {
-                        if (value.ToUpper() == tenants[i,4].ToUpper())
-                        {
-                            Occupants.ViewInfo(role,by.ToString(), i);
-                            found = true;
-                            break;
-                        }
-                        
                     }
+                    //else if (by.ToString().ToUpper() == "R")
+                    //{
+                    //    if (value.ToUpper() == tenants[i,4].ToUpper())
+                    //    {
+                    //        Occupants.ViewInfo(role,by.ToString(), i);
+                    //        found = true;
+                    //        break;
+                    //    }
+                        
+                    //}
                     
                 }
                 if(!found)
@@ -411,50 +417,118 @@ namespace HMIA
         static void UpdateBooking(char role, ref string[,] tenants)
         {
             string dash = string.Concat(Enumerable.Repeat("-", 25));
-            if (role == '1')
-            {
+           
+            Console.Clear();
+            Console.WriteLine("\n\t\t┌{0}┐", dash);
+            Console.WriteLine("\t\t|{0,-25}|","UPDATE" );
+            Console.WriteLine("\t\t|{0}|", dash);
+            Console.WriteLine("\t\t|{0,-25}|", "[1] - FIRST NAME");
+            Console.WriteLine("\t\t|{0,-25}|", "[2] - LAST NAME");
+            Console.WriteLine("\t\t|{0,-25}|", "[3] - ROOM NUMBER");
+            Console.WriteLine("\t\t|{0,-25}|", "[4] - NUMBER OF PAX");
+            Console.WriteLine("\t\t|{0,-25}|", "[5] - CHECK-IN & OUT");
+            Console.WriteLine("\t\t|{0,-25}|", "[6] - EXIT");
+            Console.WriteLine("\t\t└{0}┘", dash);
 
+            char choose = DynamicInputs<char>("Please choice info to update: ", 13);
+            int index = tenants.GetLength(0) - 1;
+            int duration = (DateTime.Parse(tenants[index, 7]).Subtract(DateTime.Parse(tenants[index, 6]))).Days;
+            string roomNumber = tenants[index, 4];
+            float amount = GetAmountToPay(roomNumber, duration,int.Parse(tenants[index, 5]));
+            float payment = float.Parse(tenants[index, 8]);
+            string tmpFname = tenants[index, 2];
+            string tmpLname = tenants[index, 3];
+            string tmpRom = tenants[index, 4];
+            string tmpPax = tenants[index, 5];
+            string tmpCheckIn = tenants[index, 6];
+            string tmpCheckOut = tenants[index, 7];
+            switch (choose)
+            {
+                case '1':
+                    string fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ", 2);
+                    tenants[index, 2] = fname;
+                    Console.WriteLine("\n\t-> Update Firstname from {0} to {1}", tmpFname, fname);
+                    break;
+                case '2':
+                    string lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ", 3);
+                    tenants[index, 3] = lname;
+                    Console.WriteLine("\n\t-> Update Lastname from {0} to {1}",tmpLname,lname);
+                    break;
+                case '3':
+                    roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
+                    tenants[index, 4] = roomNumber;
+                    //string tempRomNumber = tenants[index, 4];
+
+                    amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+                    Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+
+                    Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
+                    if (float.Parse(amount.ToString().Replace(",","")) > float.Parse(tenants[index, 8]))
+                    {
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString());
+                        tenants[index, 8] = payment.ToString();
+                        Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
+                                tenants[index, 7], duration, payment);
+                    }
+                    
+                    Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, true);
+                    break;
+                case '4':
+                    int pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
+
+                    amount = GetAmountToPay(roomNumber, duration, pax);
+
+                    tenants[index, 5] = pax.ToString();
+
+                    Console.WriteLine("\n\t-> Update Number of Pax from {0} to {1}", tmpPax, pax);
+                    if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
+                    {
+                        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString());
+                        tenants[index, 8] = payment.ToString();
+                        Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
+                                tenants[index, 7], duration, payment);
+                    }
+                        
+                    break;
+                case '5':
+                    string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                    string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+
+                    duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
+                    amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+
+                    tenants[index, 6] = checkIn;
+                    tenants[index, 7] = checkOut;
+
+                    Console.WriteLine("\n\t-> Update Check-in from {0} to {1} and Check-out from {2} to {3}", tmpCheckIn, checkIn,tmpCheckOut,checkOut);
+                    if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
+                    {
+                        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString());
+                        tenants[index, 8] = payment.ToString();
+                        Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
+                                tenants[index, 7], duration, payment);
+                    }
+                    break;
+                case '6':
+                    break;
+            }
+
+            if (!Occupants.BookExist(tenants[index, 2], tenants[index, 3], tenants[index, 6], tenants[index, 7]))
+            {
+                Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
+                // dito mo ilagay yong receipt display
+                
+                Console.WriteLine("\n\t\t->Updated successfully.<-");
+                Console.WriteLine("Please press any key to continue.");
+                Console.ReadKey();
             }
             else
             {
-                Console.Clear();
-                Console.WriteLine("\n\t\t┌{0}┐", dash);
-                Console.WriteLine("\t\t|{0,-25}|","UPDATE" );
-                Console.WriteLine("\t\t|{0}|", dash);
-                //Console.WriteLine("\t\t|{0,-25}|", "[1] - FIRST NAME");
-                //Console.WriteLine("\t\t|{0,-25}|", "[2] - LAST NAME");
-                //Console.WriteLine("\t\t|{0,-25}|", "[3] - ROOM NUMBER");
-                //Console.WriteLine("\t\t|{0,-25}|", "[4] - NUMBER OF PAX");
-                //Console.WriteLine("\t\t|{0,-25}|", "[5] - CHECK-IN & OUT");
-                //Console.WriteLine("\t\t|{0,-25}|", "[6] - EXIT");
-                Console.WriteLine("\t\t└{0}┘", dash);
-
-                int index = tenants.GetLength(0)-1;
-
-                string fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ", 2);
-                string lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ", 3);
-                string roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
-                int pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
-                string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
-                string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7);
-                float payment = DynamicInputs<float>("\n\tPayment: ", 8);
-
-                string tempRomNumber = tenants[index, 4];
-                Room.UpdateRoomStatus(tempRomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, true);
-
-                tenants[index, 2] = fname;
-                tenants[index, 3] = lname;
-                tenants[index, 4] = roomNumber;
-                tenants[index, 5] = pax.ToString();
-                tenants[index, 6] = checkIn;
-                tenants[index, 7] = checkOut;
-                tenants[index, 8] = payment.ToString();
-
-                Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
-                // dito mo ilagay yong receipt display
-                Console.WriteLine("\n\t\t->Updated successfully.<-");
-
+                Console.WriteLine("\n\t-> Please check, booking already exist.!");
             }
+             
         }
         
         public static void DisplayWelcome()
@@ -630,6 +704,9 @@ namespace HMIA
 
                             Validate.InputCharacter(ref isValid, _char.ToString(), "UPDATE", fieldNumber, 12,
                                 new string[] { "1", "2", "3"}); //update booking menu
+
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "UPDATE INFO", fieldNumber, 13,
+                                new string[] { "1", "2", "3", "4", "5", "6" }); //update booking menu
 
                             if (isValid) return (T)(object)_char;
                         }
