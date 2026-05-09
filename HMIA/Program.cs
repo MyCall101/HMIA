@@ -155,9 +155,9 @@ namespace HMIA
                 Console.WriteLine("\t\t\t┌{0}┐",dash);
                 Console.WriteLine("\t\t\t|[O] - OCCUPANTS/ROOM NUMBER |");
                 //Console.WriteLine("\t\t\t|[R] - ROOM CODE\t |");
-                Console.WriteLine("\t\t\t|[D] - DATES\t\t |");
-                Console.WriteLine("\t\t\t|[X] - BACK TO PROCESS   |");
-                Console.WriteLine("\t\t\t└{0}┘");
+                Console.WriteLine("\t\t\t|{0,-28}|", "[D] - DATES");
+                Console.WriteLine("\t\t\t|{0,-28}|", "[X] - BACK TO PROCESS");
+                Console.WriteLine("\t\t\t└{0}┘",dash);
                 char choose = DynamicInputs<char>("\tPlease choose search by: ",10); //Console.ReadLine().ToUpper();
                 if (char.ToUpper(choose) == 'O')
                 {
@@ -337,7 +337,7 @@ namespace HMIA
                 int duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
                 float amount = GetAmountToPay(roomNumber, duration, pax);
                 Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));//F2 = two decimal places, N0 = 1,000
-                float payment = DynamicInputs<float>("\n\tPayment: ₱", 8,amount.ToString());
+                float payment = DynamicInputs<float>("\n\tPayment: ₱", 8,amount.ToString(),process.ToString());
 
                 char confirm = DynamicInputs<char>("\n\tConfirm reserve booking (Y/N)?: ", 9);
 
@@ -346,7 +346,7 @@ namespace HMIA
                 {
                     if (!Occupants.BookExist(fname,lname,checkIn,checkOut))
                     {
-                        addTenants = new string[] {GetRole(role.ToString()),ProceDescription(process.ToString()), fname, lname,roomNumber.ToUpper(), pax.ToString(), checkIn, checkOut,
+                        addTenants = new string[] {GetRole(role.ToString()),ProcDescription(process.ToString()), fname, lname,roomNumber.ToUpper(), pax.ToString(), checkIn, checkOut,
                          payment.ToString()};
 
                         Occupants.AddNew(ref tenants, addTenants);
@@ -355,7 +355,7 @@ namespace HMIA
                         Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
 
                         // dito mo ilagay yong receipt display
-                        Occupants.Receipt(fname,lname,roomNumber,pax,checkIn,checkOut,duration,payment);
+                        Occupants.Receipt(fname,lname,roomNumber,pax,checkIn,checkOut,duration,payment,process);
 
                         if(process == '1')
                         {
@@ -367,7 +367,7 @@ namespace HMIA
                         }
                         
                         //Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
-                        Console.WriteLine("\tPress anykey to continue.");
+                        Console.WriteLine("\n\tPress anykey to continue...");
                         Console.ReadKey();
 
                         bool isAsking = true;
@@ -430,105 +430,121 @@ namespace HMIA
             Console.WriteLine("\t\t|{0,-25}|", "[6] - EXIT");
             Console.WriteLine("\t\t└{0}┘", dash);
 
-            char choose = DynamicInputs<char>("Please choice info to update: ", 13);
+            char choose = DynamicInputs<char>("\tPlease choice info to update: ", 13);
             int index = tenants.GetLength(0) - 1;
-            int duration = (DateTime.Parse(tenants[index, 7]).Subtract(DateTime.Parse(tenants[index, 6]))).Days;
-            string roomNumber = tenants[index, 4];
-            float amount = GetAmountToPay(roomNumber, duration,int.Parse(tenants[index, 5]));
-            float payment = float.Parse(tenants[index, 8]);
+            
+            
             string tmpFname = tenants[index, 2];
             string tmpLname = tenants[index, 3];
             string tmpRom = tenants[index, 4];
             string tmpPax = tenants[index, 5];
             string tmpCheckIn = tenants[index, 6];
             string tmpCheckOut = tenants[index, 7];
+
+            char process = GetProcNumber(tenants[index, 1].ToString());
+            string fname = tenants[index, 2];
+            string lname = tenants[index, 3];
+            string roomNumber = tenants[index, 4];
+            int pax = int.Parse(tenants[index, 5]);
+            string checkIn = tenants[index, 6];
+            string checkOut = tenants[index, 7];
+
+            int duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
+            float amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+            float payment = float.Parse(tenants[index, 8]);
+
             switch (choose)
             {
                 case '1':
-                    string fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ", 2);
-                    tenants[index, 2] = fname;
-                    Console.WriteLine("\n\t-> Update Firstname from {0} to {1}", tmpFname, fname);
+                    fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ", 2);
+                    //tenants[index, 2] = fname;
+                    if (!Occupants.BookExist(fname, lname, checkIn, checkOut, index))
+                        Console.WriteLine("\n\t-> Update Firstname from {0} to {1}", tmpFname, fname);
                     break;
                 case '2':
-                    string lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ", 3);
-                    tenants[index, 3] = lname;
-                    Console.WriteLine("\n\t-> Update Lastname from {0} to {1}",tmpLname,lname);
+                    lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ", 3);
+                    //tenants[index, 3] = lname;
+                    if (!Occupants.BookExist(fname, lname, checkIn, checkOut, index))
+                        Console.WriteLine("\n\t-> Update Lastname from {0} to {1}",tmpLname,lname);
                     break;
                 case '3':
                     roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
-                    tenants[index, 4] = roomNumber;
+                    //tenants[index, 4] = roomNumber;
                     //string tempRomNumber = tenants[index, 4];
 
                     amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
-                    Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
-
+                    
                     Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
                     if (float.Parse(amount.ToString().Replace(",","")) > float.Parse(tenants[index, 8]))
                     {
-                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString());
-                        tenants[index, 8] = payment.ToString();
-                        Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
-                                tenants[index, 7], duration, payment);
+                        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(),process.ToString());
+                        //tenants[index, 8] = payment.ToString();
+                        //Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
+                        //        tenants[index, 7], duration, payment);
                     }
                     
                     Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, true);
                     break;
                 case '4':
-                    int pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
+                    pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
 
                     amount = GetAmountToPay(roomNumber, duration, pax);
-
-                    tenants[index, 5] = pax.ToString();
 
                     Console.WriteLine("\n\t-> Update Number of Pax from {0} to {1}", tmpPax, pax);
                     if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
                     {
                         Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
-                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString());
-                        tenants[index, 8] = payment.ToString();
-                        Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
-                                tenants[index, 7], duration, payment);
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
+                        //tenants[index, 8] = payment.ToString();
+                        //Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
+                        //        tenants[index, 7], duration, payment);
                     }
                         
                     break;
                 case '5':
-                    string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
-                    string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+                    checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                    checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
 
                     duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
                     amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
-
-                    tenants[index, 6] = checkIn;
-                    tenants[index, 7] = checkOut;
 
                     Console.WriteLine("\n\t-> Update Check-in from {0} to {1} and Check-out from {2} to {3}", tmpCheckIn, checkIn,tmpCheckOut,checkOut);
                     if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
                     {
                         Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
-                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString());
-                        tenants[index, 8] = payment.ToString();
-                        Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
-                                tenants[index, 7], duration, payment);
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
                     }
                     break;
                 case '6':
                     break;
             }
 
-            if (!Occupants.BookExist(tenants[index, 2], tenants[index, 3], tenants[index, 6], tenants[index, 7]))
+            if (!Occupants.BookExist(fname, lname, checkIn, checkOut,index))
             {
+                tenants[index, 2] = fname;
+                tenants[index, 3] = lname;
+                tenants[index, 4] = roomNumber;
+                tenants[index, 5] = pax.ToString();
+                tenants[index, 6] = checkIn;
+                tenants[index, 7] = checkOut;
+                tenants[index, 8] = payment.ToString();
+
+                Occupants.Receipt(fname, lname, roomNumber, pax, checkIn,
+                        checkOut, duration, payment,process);
+
                 Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
                 // dito mo ilagay yong receipt display
                 
                 Console.WriteLine("\n\t\t->Updated successfully.<-");
-                Console.WriteLine("Please press any key to continue.");
-                Console.ReadKey();
             }
             else
             {
                 Console.WriteLine("\n\t-> Please check, booking already exist.!");
             }
-             
+            Console.WriteLine("\n\tPress anykey to continue...");
+            Console.ReadKey();
+
         }
         
         public static void DisplayWelcome()
@@ -605,7 +621,7 @@ namespace HMIA
             return _type;
         }
 
-        static string ProceDescription(string process)
+        static string ProcDescription(string process)
         {
             string rmType = "";
             if (process == "1")
@@ -618,7 +634,22 @@ namespace HMIA
             }
             return rmType;
         }
-        static T DynamicInputs<T>(string prompt,int fieldNumber,string value="")
+
+        public static char GetProcNumber(string process)
+        {
+            char rmType = '0';
+            if (process == "RESERVE ROOM")
+            {
+                rmType = '1';
+            }
+            else if (process == "WALK IN")
+            {
+                rmType = '2';
+            }
+            return rmType;
+        }
+
+        static T DynamicInputs<T>(string prompt,int fieldNumber,string value="",string process = "")
         {
             
             while (true)
@@ -676,7 +707,7 @@ namespace HMIA
                         {
 
                             // Validation start here for strings
-                            Validate.Payment(ref isValid, result.ToString(), value, "PAYMENT", fieldNumber, 8);
+                            Validate.Payment(ref isValid, result.ToString(), value, "PAYMENT", fieldNumber, 8,process);
 
                             // if success return result
                             if (isValid) return (T)result;

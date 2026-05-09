@@ -86,7 +86,8 @@ namespace HMIA
             if (_value.Trim() == "") isValid = false;
         }
 
-        public static void Payment(ref bool isValid, string _value, string _value2, string fieldName, int fieldNumber, int defFieldNumber)
+        public static void Payment(ref bool isValid, string _value, string _value2, string fieldName, int fieldNumber, int defFieldNumber,
+                                string process)
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
             {
@@ -96,6 +97,10 @@ namespace HMIA
                 if( v1 < v2)
                 {
                     Console.WriteLine("\n\t-> {0} : Check amount.", fieldName);
+                    isValid = false;
+                }else if(process == "1" && v1 != v2)
+                {
+                    Console.WriteLine("\n\t-> {0} : Amount should be equal in reserved process.", fieldName);
                     isValid = false;
                 }
             }

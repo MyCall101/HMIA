@@ -31,7 +31,7 @@ namespace HMIA
         }
 
         public static void Receipt(string fname,string lname,string room,int pax,
-                                string checkIn,string checkOut,int duration,float payment)
+                                string checkIn,string checkOut,int duration,float payment,char process)
         {
             string dash = string.Concat(Enumerable.Repeat("-", 40));
             float totalAmount = Program.GetAmountToPay(room,duration,pax);
@@ -93,27 +93,40 @@ namespace HMIA
                 Console.WriteLine("\t|Room per night: {0,-24}|", perNightRate.ToString("N0"));
                 Console.WriteLine("\t|Days stay: {0,-29}|", duration.ToString("N0"));
                 Console.WriteLine("\t|{0,-39}|", dash);
-                Console.WriteLine("\t|\tTotal : {0,-25}|", totalAmount.ToString("N0"));
-                Console.WriteLine("\t|\tPay : {0,-27}|", payment.ToString("N0"));
-                Console.WriteLine("\t|\tChange : {0,-24}|", (payment - totalAmount).ToString("N0"));
+                Console.WriteLine("\t|Total : {0,-25}|", totalAmount.ToString("N0"));
+                Console.WriteLine("\t|Paid : {0,-27}|", payment.ToString("N0"));
+                if(process != '1')
+                    Console.WriteLine("\t|Change : {0,-24}|", (payment - totalAmount).ToString("N0"));
                 Console.WriteLine("\t└{0,-39}┘",dash );
             }
 
             
         }
 
-        public static bool BookExist(string fname,string lname,string checkIn,string checkOut)
+        public static bool BookExist(string fname,string lname,string checkIn,string checkOut,int index = -1)
         {
             bool isExist = false;
             if (Program.tenants.GetLength(0)>0)
             {
                 for (int i=0;i<Program.tenants.GetLength(0);i++)
                 {
-                    if (fname == Program.tenants[i, 2] && lname == Program.tenants[i, 3] &&
-                        checkIn == Program.tenants[i, 6] && checkOut == Program.tenants[i, 7])
+                    
+                    if (fname.ToUpper() == Program.tenants[i, 2].ToUpper() && lname.ToUpper() == Program.tenants[i, 3].ToUpper() &&
+                    checkIn == Program.tenants[i, 6] && checkOut == Program.tenants[i, 7])
                     {
-                        isExist = true; break;
+                        if(index == -1)
+                        {
+                            isExist = true;
+                            break;
+                        }else if (index > -1 && i !=  index)
+                        {
+                            isExist = true;
+                            break;
+                        }
+                        
                     }
+                    
+                    
                 }
             }
 
