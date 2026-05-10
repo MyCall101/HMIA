@@ -34,8 +34,10 @@ namespace HMIA
         {
             int row = Program.tenants.GetLength(0);
             string[,] nwTenants = new string[row - 1, 10];
-            for (int i=0,idx=0;i<=row-1;i++)
+            for (int i=0,idx=0;i<row;i++)
             {
+                if (Program.tenants[i, 4].ToUpper() == roomNumber.ToUpper()) continue;
+
                 if (Program.tenants[i,4].ToUpper() != roomNumber.ToUpper())
                 {
                     for(int k=0; k<10; k++)
@@ -158,21 +160,21 @@ namespace HMIA
             string dash = "";
             if (Program.tenants.GetLength(0) > 0)
             {
-                dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 123)) : String.Concat(Enumerable.Repeat("-", 105));
-                Console.WriteLine("\n\t┌{0}┐", dash);
+                dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 133)) : String.Concat(Enumerable.Repeat("-", 115));
+                Console.WriteLine("\n┌{0}┐", dash);
                 if (role == '1')
                 {
-                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
+                    Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
                         "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL","REFUND/CHANGE","PROCESS_TYPE","ROLE");
                     
                 }
                 else
                 {
-                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
+                    Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
                         "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE");
                     
                 }
-                Console.WriteLine("\t|{0}|",dash);
+                Console.WriteLine("|{0}|",dash);
 
                 for (int i = 0; i < Program.tenants.GetLength(0); i++)
                 {
@@ -180,7 +182,7 @@ namespace HMIA
                     {
                         if (role == '1')
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|", 
+                            Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|", 
                                 Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
                                 Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
                                 "₱" + Program.tenants[i, 8], "₱" + Program.tenants[i, 9],
@@ -189,7 +191,7 @@ namespace HMIA
                         }
                         else
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
+                            Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
                                 Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
                                 Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
                                 "₱" + Program.tenants[i, 8], "₱" + Program.tenants[i, 9],
@@ -197,13 +199,13 @@ namespace HMIA
                         }
 
                         if (i != Program.tenants.GetLength(0) - 1)
-                            Console.WriteLine("\t|{0}|",dash);
+                            Console.WriteLine("|{0}|",dash);
                     }
                     else
                     {
                         if (role == '1')
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
+                            Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
                                 Program.tenants[index, 2] + " " + Program.tenants[index, 3], Program.tenants[index, 4],
                                 Program.tenants[index, 5], Program.tenants[index, 6], Program.tenants[index, 7],
                                 "₱" + Program.tenants[index, 8], "₱" + Program.tenants[index, 9],
@@ -212,7 +214,7 @@ namespace HMIA
                         }
                         else
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
+                            Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
                                 Program.tenants[index, 2] + " " + Program.tenants[index, 3], Program.tenants[index, 4],
                                 Program.tenants[index, 5], Program.tenants[index, 6], Program.tenants[index, 7],
                                 "₱" + Program.tenants[index, 8], "₱" + Program.tenants[i, 9],
@@ -223,7 +225,7 @@ namespace HMIA
                     }
 
                 }
-                Console.WriteLine("\t└{0}┘\n", dash);
+                Console.WriteLine("└{0}┘\n", dash);
             }
             else
             {

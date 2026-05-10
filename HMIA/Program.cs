@@ -130,7 +130,8 @@ namespace HMIA
                         else if (process == '6')
                         {
                             //CHECK OUT
-                            RoomCheckOut();
+                            if(availableCtrLuxRom <3 || availableCtrStandRom < 3 )
+                                RoomCheckOut();
                             
                         }
                     }
@@ -250,19 +251,19 @@ namespace HMIA
 
                 if (found)
                 {
-                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 118)) : String.Concat(Enumerable.Repeat("-", 92));
+                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 133)) : String.Concat(Enumerable.Repeat("-", 115));
                     Console.WriteLine("\n\t┌{0}┐", dash);
                     
                     if (role == '1')
                     {
-                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "PROCESS_TYPE", "ROLE");
+                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE", "PROCESS_TYPE", "ROLE");
 
                     }
                     else
                     {
-                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL");
+                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE");
 
                     }
                     Console.WriteLine("\t|{0}|", dash);
@@ -272,22 +273,25 @@ namespace HMIA
                         {
                             if (role == '1')
                             {
-                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|",
+                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
                                     temp[n, 2] + " " + temp[n, 3], temp[n, 4],
                                     temp[n, 5], temp[n, 6], temp[n, 7],
-                                    "₱" + temp[n, 8], "₱" + temp[n, 9], 
+                                    "₱" + temp[n, 8], "₱" + temp[n, 9],
+                                    "₱" + (float.Parse(temp[n, 8]) - float.Parse(temp[n, 9])).ToString(),
                                     temp[n, 1], temp[n, 0]);
                             }
                             else
                             {
-                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
+                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
                                     temp[n, 2] + " " + temp[n, 3], temp[n, 4],
                                     temp[n, 5], temp[n, 6], temp[n, 7],
-                                    "₱" + temp[n, 8], "₱" + temp[n, 9]);
+                                    "₱" + temp[n, 8], "₱" + temp[n, 9],
+                                    "₱" + (float.Parse(temp[n, 8]) - float.Parse(temp[n, 9])).ToString());
                             }
 
-                            if (n != temp.GetLength(0) - 1)
-                                Console.WriteLine("\t|{0}|", dash);
+                            if (n != (temp.GetLength(0) - 1))
+                                if (temp[n+1,0] != null)
+                                    Console.WriteLine("\t|{0}|", dash); 
                         }
                         
                     }
@@ -451,6 +455,8 @@ namespace HMIA
             string tmpPax = tenants[index, 5];
             string tmpCheckIn = tenants[index, 6];
             string tmpCheckOut = tenants[index, 7];
+            float tmpPayment = float.Parse(tenants[index, 8]);
+            float tmpAmount = float.Parse(tenants[index, 9]);
 
             char process = GetProcNumber(tenants[index, 1].ToString());
             string fname = tenants[index, 2];
@@ -461,8 +467,9 @@ namespace HMIA
             string checkOut = tenants[index, 7];
 
             int duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
-            float amount = float.Parse(tenants[index, 9]);//GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+            
             float payment = float.Parse(tenants[index, 8]);
+            float amount = float.Parse(tenants[index, 9]);//GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
 
             switch (choose)
             {
@@ -539,8 +546,15 @@ namespace HMIA
                 tenants[index, 5] = pax.ToString();
                 tenants[index, 6] = checkIn;
                 tenants[index, 7] = checkOut;
-                tenants[index, 8] = payment.ToString();
-                tenants[index, 9] = amount.ToString();
+
+                if (tmpAmount > amount && tmpPayment == payment && process == '1')
+                {
+                    tenants[index, 8] = (payment - (tmpAmount - amount)).ToString();
+                    tenants[index, 9] = amount.ToString();
+                }else {
+                    tenants[index, 8] = payment.ToString();
+                    tenants[index, 9] = amount.ToString();
+                }
 
                 if(choose == '3')
                 {
@@ -579,10 +593,10 @@ namespace HMIA
         {
             string dash = string.Concat(Enumerable.Repeat("-", 55));
             Console.WriteLine("\t┌{0}┐", dash);
-            Console.WriteLine("\t|\t\t\t  THANK YOU FOR STAYING\t\t|");//TO LAAR's HOTEL!
-            Console.WriteLine("\t|\t\t\t  At LAAR's HOTEL!\t\t|");
+            Console.WriteLine("\t|\t\t  THANK YOU FOR STAYING\t\t\t|");//TO LAAR's HOTEL!
+            Console.WriteLine("\t|\t\t  at LAAR's HOTEL!\t\t\t|");
             Console.WriteLine("\t|-------------------------------------------------------|");
-            Console.WriteLine("\t|\t\t\tHave a safe trip.\t\t|");
+            Console.WriteLine("\t|\t\tHave a safe trip.\t\t\t|");
             Console.WriteLine("\t└{0}┘\n", dash);
         }
 
