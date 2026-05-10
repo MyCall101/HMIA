@@ -165,13 +165,13 @@ namespace HMIA
                 if (role == '1')
                 {
                     Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
-                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL","REFUND/CHANGE","PROCESS_TYPE","ROLE");
+                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL","CHANGE","PROCESS_TYPE","ROLE");
                     
                 }
                 else
                 {
                     Console.WriteLine("|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
-                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE");
+                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "CHANGE");
                     
                 }
                 Console.WriteLine("|{0}|",dash);

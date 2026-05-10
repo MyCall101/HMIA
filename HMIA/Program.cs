@@ -167,11 +167,10 @@ namespace HMIA
                 string dash = string.Concat(Enumerable.Repeat("-", 28));
                 Console.WriteLine("\t\t\t┌{0}┐",dash);
                 Console.WriteLine("\t\t\t|[O] - OCCUPANTS/ROOM NUMBER |");
-                //Console.WriteLine("\t\t\t|[R] - ROOM CODE\t |");
                 Console.WriteLine("\t\t\t|{0,-28}|", "[D] - DATES");
                 Console.WriteLine("\t\t\t|{0,-28}|", "[X] - BACK TO PROCESS");
                 Console.WriteLine("\t\t\t└{0}┘",dash);
-                char choose = DynamicInputs<char>("\tPlease choose search by: ",10); //Console.ReadLine().ToUpper();
+                char choose = DynamicInputs<char>("\tPlease choose search by: ",10);
                 if (char.ToUpper(choose) == 'O')
                 {
                     Console.Write("\n\tPlease enter Firstname or Lastname or Room number: ");
@@ -179,19 +178,9 @@ namespace HMIA
                     SearchBy(choose, name,role);
                     Console.WriteLine("\n\tPress any key to continue...");
                 }
-                //else if (char.ToUpper(choose) == 'R')
-                //{
-                //    Console.Write("\n\tPlease enter the Room Code: ");
-                //    string number = Console.ReadLine();
-                //    SearchBy(choose, number,role);
-                //}
                 else if (char.ToUpper(choose) == 'D')
                 {
-                    //Console.Write("\n\tCheck In date (MM-dd-yyyy): ");
-                    //string date1 = Console.ReadLine();
-                    //Console.Write("\n\tCheck Out date (MM-dd-yyyy): ");
-                    //string date2 = Console.ReadLine();
-
+                   
                     string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
                     string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
                     
@@ -257,13 +246,13 @@ namespace HMIA
                     if (role == '1')
                     {
                         Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE", "PROCESS_TYPE", "ROLE");
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "CHANGE", "PROCESS_TYPE", "ROLE");
 
                     }
                     else
                     {
                         Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE");
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "CHANGE");
 
                     }
                     Console.WriteLine("\t|{0}|", dash);
@@ -365,11 +354,8 @@ namespace HMIA
                          payment.ToString(),amount.ToString()};
 
                         Occupants.AddNew(ref tenants, addTenants);
-                        //Console.Clear();
-                        //Occupants.ViewInfo(role); // Ven Ecomment ni siya alisdi sa Receipt Transaction
                         Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
 
-                        // dito mo ilagay yong receipt display
                         Occupants.Receipt(fname,lname,roomNumber,pax,checkIn,checkOut,duration,payment,process);
 
                         if(process == '1')
@@ -420,7 +406,7 @@ namespace HMIA
                     }
                     else
                     {
-                        Console.WriteLine("\n\t-> Please check, booking already exist.!");
+                        Console.WriteLine("\n\t-> Before saving checking information,booking already exist.!");
                     }
                     
                 }
@@ -486,24 +472,26 @@ namespace HMIA
                         Console.WriteLine("\n\t-> Update Lastname from {0} to {1}",tmpLname,lname);
                     break;
                 case '3':
-                    roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
-                    //tenants[index, 4] = roomNumber;
-                    //string tempRomNumber = tenants[index, 4];
-
-                    amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
-                    
-                    Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
-                    if (float.Parse(amount.ToString().Replace(",","")) > float.Parse(tenants[index, 8]))
+                    if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
                     {
-                        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
-                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(),process.ToString());
-                        //tenants[index, 8] = payment.ToString();
-                        //Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
-                        //        tenants[index, 7], duration, payment);
+                        roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
+
+                        amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+
+                        Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
+                        if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
+                        {
+                            Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                            payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
+
+                        }
                     }
-                    
-                    
-                    break;
+                    else
+                    {
+                        Console.WriteLine("\n\t-> No rooms available.!");
+                    }
+
+                        break;
                 case '4':
                     pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
 
@@ -573,7 +561,7 @@ namespace HMIA
             }
             else
             {
-                Console.WriteLine("\n\t-> Please check, booking already exist.!");
+                Console.WriteLine("\n\t-> Before saving checking information,booking already exist.!");
             }
             Console.WriteLine("\n\tPress anykey to continue...");
             Console.ReadKey();
