@@ -186,11 +186,17 @@ namespace HMIA
                 //}
                 else if (char.ToUpper(choose) == 'D')
                 {
-                    Console.Write("\n\tCheck In date (MM-dd-yyyy): ");
-                    string date1 = Console.ReadLine();
-                    Console.Write("\n\tCheck Out date (MM-dd-yyyy): ");
-                    string date2 = Console.ReadLine();
-                    SearchBy(choose, date1,date2, role);
+                    //Console.Write("\n\tCheck In date (MM-dd-yyyy): ");
+                    //string date1 = Console.ReadLine();
+                    //Console.Write("\n\tCheck Out date (MM-dd-yyyy): ");
+                    //string date2 = Console.ReadLine();
+
+                    string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                    string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+                    
+                    SearchBy(choose, checkIn, checkOut, role);
+
+                    Console.WriteLine("\n\tPress anykey to continue...");
                 }
                 else if (char.ToUpper(choose) == 'X')
                 {
@@ -210,7 +216,7 @@ namespace HMIA
             bool found = false;
             if (tenants.GetLength(0) > 0)
             {
-                string[,] temp = new string[tenants.GetLength(0), 9];
+                string[,] temp = new string[tenants.GetLength(0), 10];
                 for (int i = 0; i < tenants.GetLength(0); i++)
                 {
                     if (by.ToString().ToUpper() == "D")
@@ -455,7 +461,7 @@ namespace HMIA
             string checkOut = tenants[index, 7];
 
             int duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
-            float amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+            float amount = float.Parse(tenants[index, 9]);//GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
             float payment = float.Parse(tenants[index, 8]);
 
             switch (choose)
@@ -489,7 +495,7 @@ namespace HMIA
                         //        tenants[index, 7], duration, payment);
                     }
                     
-                    Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, true);
+                    
                     break;
                 case '4':
                     pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
@@ -512,7 +518,7 @@ namespace HMIA
                     checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
 
                     duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
-                    amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+                    amount = GetAmountToPay(roomNumber, duration, pax);
 
                     Console.WriteLine("\n\t-> Update Check-in from {0} to {1} and Check-out from {2} to {3}", tmpCheckIn, checkIn,tmpCheckOut,checkOut);
                     if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
@@ -534,6 +540,14 @@ namespace HMIA
                 tenants[index, 6] = checkIn;
                 tenants[index, 7] = checkOut;
                 tenants[index, 8] = payment.ToString();
+                tenants[index, 9] = amount.ToString();
+
+                if(choose == '3')
+                {
+                    Room.UpdateRoomStatus(tmpRom, ref availableCtrLuxRom, ref availableCtrStandRom, true);
+                    Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
+                }
+                
 
                 Occupants.Receipt(fname, lname, roomNumber, pax, checkIn,
                         checkOut, duration, payment,process);

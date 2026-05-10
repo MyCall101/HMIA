@@ -34,7 +34,7 @@ namespace HMIA
         {
             int row = Program.tenants.GetLength(0);
             string[,] nwTenants = new string[row - 1, 10];
-            for (int i=0,idx=0;i<row;i++)
+            for (int i=0,idx=0;i<=row-1;i++)
             {
                 if (Program.tenants[i,4].ToUpper() != roomNumber.ToUpper())
                 {
@@ -59,8 +59,6 @@ namespace HMIA
             float paxExcessRate = 0;
             int p = 0;
             
-            
-
             int index = Room.Index(room,Program.luxuryRooms);
             if (index >-1)
             {
@@ -114,7 +112,11 @@ namespace HMIA
                 Console.WriteLine("\t|{0,-39}|", dash);
                 Console.WriteLine("\t|{0,-40}|", "Total:" + totalAmount.ToString("N0"));
                 Console.WriteLine("\t|{0,-40}|", "Paid :" + payment.ToString("N0"));
-                if(process != '1')
+                if(process == '1')
+                    if(totalAmount<payment)
+                        Console.WriteLine("\t|{0,-40}|", "Refunded : " + (payment - totalAmount).ToString("N0"));
+
+                if (process != '1')
                     Console.WriteLine("\t|{0,-40}|", "Change : " + (payment - totalAmount).ToString("N0"));
                 Console.WriteLine("\t└{0,-39}┘",dash );
             }
@@ -156,18 +158,18 @@ namespace HMIA
             string dash = "";
             if (Program.tenants.GetLength(0) > 0)
             {
-                dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 118)) : String.Concat(Enumerable.Repeat("-", 92));
+                dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 123)) : String.Concat(Enumerable.Repeat("-", 105));
                 Console.WriteLine("\n\t┌{0}┐", dash);
                 if (role == '1')
                 {
-                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|",
-                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL","PROCESS_TYPE","ROLE");
+                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
+                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL","REFUND/CHANGE","PROCESS_TYPE","ROLE");
                     
                 }
                 else
                 {
-                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
-                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL");
+                    Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
+                        "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "REFUND/CHANGE");
                     
                 }
                 Console.WriteLine("\t|{0}|",dash);
@@ -178,18 +180,20 @@ namespace HMIA
                     {
                         if (role == '1')
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|", 
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|", 
                                 Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
                                 Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
                                 "₱" + Program.tenants[i, 8], "₱" + Program.tenants[i, 9],
+                                "₱" + (float.Parse(Program.tenants[i, 8]) - float.Parse(Program.tenants[i, 9])).ToString(),
                                 Program.tenants[i, 1], Program.tenants[i, 0]);
                         }
                         else
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
                                 Program.tenants[i, 2] + " " + Program.tenants[i, 3], Program.tenants[i, 4],
                                 Program.tenants[i, 5], Program.tenants[i, 6], Program.tenants[i, 7],
-                                "₱" + Program.tenants[i, 8], "₱" + Program.tenants[i, 9]);
+                                "₱" + Program.tenants[i, 8], "₱" + Program.tenants[i, 9],
+                                "₱" + (float.Parse(Program.tenants[i, 8]) - float.Parse(Program.tenants[i, 9])).ToString());
                         }
 
                         if (i != Program.tenants.GetLength(0) - 1)
@@ -199,18 +203,20 @@ namespace HMIA
                     {
                         if (role == '1')
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-14}{8,-12}|",
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
                                 Program.tenants[index, 2] + " " + Program.tenants[index, 3], Program.tenants[index, 4],
                                 Program.tenants[index, 5], Program.tenants[index, 6], Program.tenants[index, 7],
                                 "₱" + Program.tenants[index, 8], "₱" + Program.tenants[index, 9],
+                                "₱" + (float.Parse(Program.tenants[i, 8]) - float.Parse(Program.tenants[i, 9])).ToString(),
                                 Program.tenants[index, 1], Program.tenants[index, 0]);
                         }
                         else
                         {
-                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}|",
+                            Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
                                 Program.tenants[index, 2] + " " + Program.tenants[index, 3], Program.tenants[index, 4],
                                 Program.tenants[index, 5], Program.tenants[index, 6], Program.tenants[index, 7],
-                                "₱" + Program.tenants[index, 8], "₱" + Program.tenants[i, 9]);
+                                "₱" + Program.tenants[index, 8], "₱" + Program.tenants[i, 9],
+                                "₱" + (float.Parse(Program.tenants[i, 8]) - float.Parse(Program.tenants[i, 9])).ToString());
                         }
 
                         break;
