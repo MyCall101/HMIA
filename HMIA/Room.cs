@@ -9,10 +9,13 @@ namespace HMIA
     internal class Room
     {
 
-        public static void DesignDraw(string[,] rooms,string title)
+        public static void DesignDraw(string[,] rooms, string title)
         {
+            // Outer thin lines
             string dash = string.Concat(Enumerable.Repeat("-", 111));
-            string dash2 = string.Concat(Enumerable.Repeat("-", 30));
+
+            // Inner double lines for the room "Cards"
+            string cardTop = string.Concat(Enumerable.Repeat("═", 30));
 
             string stickHead = @" O";
             string stickBody = @"/|\";
@@ -30,56 +33,143 @@ namespace HMIA
             string excess2 = "Excess pax: " + rooms[1, 5];
             string excess3 = "Excess pax: " + rooms[2, 5];
 
-            string paxFor1 = (rooms[0,1] == "0")? goodFor1: stickHead;
-            string perRate1 = (rooms[0, 1] == "0") ? rate1 : stickBody;
-            string xcess1 = (rooms[0, 1] == "0") ? excess1 : stickLeg;
-            
-            string paxFor2 = (rooms[1, 1] == "0") ? goodFor2 : stickHead;
-            string perRate2 = (rooms[1, 1] == "0") ? rate2 : stickBody;
-            string xcess2 = (rooms[1, 1] == "0") ? excess2 : stickLeg;
+            //string paxFor1 = (rooms[0, 1] == "0") ? goodFor1 : stickHead;
+            //string perRate1 = (rooms[0, 1] == "0") ? rate1 : stickBody;
+            //string xcess1 = (rooms[0, 1] == "0") ? excess1 : stickLeg;
 
-            string paxFor3 = (rooms[2, 1] == "0") ? goodFor3 : stickHead;
-            string perRate3 = (rooms[2, 1] == "0") ? rate3 : stickBody;
-            string xcess3 = (rooms[2, 1] == "0") ? excess3 : stickLeg;
+            //string paxFor2 = (rooms[1, 1] == "0") ? goodFor2 : stickHead;
+            //string perRate2 = (rooms[1, 1] == "0") ? rate2 : stickBody;
+            //string xcess2 = (rooms[1, 1] == "0") ? excess2 : stickLeg;
+
+            //string paxFor3 = (rooms[2, 1] == "0") ? goodFor3 : stickHead;
+            //string perRate3 = (rooms[2, 1] == "0") ? rate3 : stickBody;
+            //string xcess3 = (rooms[2, 1] == "0") ? excess3 : stickLeg;
+
+            string paxFor1 = (rooms[0, 1] == "0") ? goodFor1 : goodFor1;
+            string perRate1 = (rooms[0, 1] == "0") ? rate1 : rate1;
+            string xcess1 = (rooms[0, 1] == "0") ? excess1 : excess1;
+
+            string paxFor2 = (rooms[1, 1] == "0") ? goodFor2 : goodFor2;
+            string perRate2 = (rooms[1, 1] == "0") ? rate2 : rate2;
+            string xcess2 = (rooms[1, 1] == "0") ? excess2 : excess2;
+
+            string paxFor3 = (rooms[2, 1] == "0") ? goodFor3 : goodFor3;
+            string perRate3 = (rooms[2, 1] == "0") ? rate3 : rate3;
+            string xcess3 = (rooms[2, 1] == "0") ? excess3 : excess3;
+
+            // DRAW ASCII ART HEADERS
+            ConsoleColor themeColor = ConsoleColor.White;
+
+            if (title == "LUXURY")
+            {
+                themeColor = ConsoleColor.Yellow;
+                Console.ForegroundColor = themeColor;
+                string luxLogo = @"
+                            ░█░░░█░█░▀▄▀░█░█░█▀▄░█░█░░░█▀█░█▀█░█▀█░█▄█
+                            ░█░░░█░█░░█░░█░█░█▀▄░░█░░░░█▀▄░█░█░█░█░█░█
+                            ░▀▀▀░▀▀▀░▀░▀░▀▀▀░▀░▀░░▀░░░░▀░▀░▀▀▀░▀▀▀░▀░▀";
+                Console.WriteLine("\n" + luxLogo);
+                Console.ResetColor();
+            }
+            else if (title == "STANDARD")
+            {
+                themeColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = themeColor;
+                string stdLogo = @"
+                        ░█▀▀░▀█▀░█▀█░█▀█░█▀▄░█▀█░█▀▄░█▀▄░░░█▀█░█▀█░█▀█░█▄█
+                        ░▀▀█░░█░░█▀█░█░█░█░█░█▀█░█▀▄░█░█░░░█▀▄░█░█░█░█░█░█
+                        ░▀▀▀░░▀░░▀░▀░▀░▀░▀▀░░▀░▀░▀░▀░▀▀░░░░▀░▀░▀▀▀░▀▀▀░▀░▀";
+                Console.WriteLine("\n" + stdLogo);
+                Console.ResetColor();
+            }
 
             Console.WriteLine("┌{0}┐", dash);
             string amenities = "";
-            if(title == "LUXURY")
+            if (title == "LUXURY")
             {
-                Console.WriteLine("|\t\t\t\t\t\t{0} ROOM\t\t\t\t\t\t\t|", title);
-                amenities = "Sheets,mattresses & curated pillow menus.Rain showers & deep soaking tubs." +
-                            "Smart room controls (voice)";
+                amenities = "Sheets, mattresses & curated pillow menus. Rain showers & deep soaking tubs. " +
+                            "Smart room controls.";               
             }
-            else if(title == "STANDARD")
+            else if (title == "STANDARD")
             {
-                Console.WriteLine("|\t\t\t\t\t\t{0} ROOM\t\t\t\t\t\t\t|", title);
-                amenities = "Clean linens, basic mattress, 1–2 pillows. Shower/tub combo." +
-                            " Standard TV, basic Wi-Fi, and telephone.";
+                amenities = "Clean linens, basic mattress, 1–2 pillows. Shower/tub combo. " +
+                            "Standard TV, Wi-Fi, and telephone.";
             }
-            
-            Console.WriteLine("|{0}|",dash);
-            
-            Console.WriteLine("|┌{0}┐\t┌{1}┐\t┌{2}┐|", dash2,dash2,dash2);
-            Console.WriteLine("||{0,-30}|\t|{1,-30}|\t|{2,-30}||","ROOM " + rooms[0, 0],"ROOM " + rooms[1, 0],"ROOM " + rooms[2, 0]);
-            Console.WriteLine("||{0}|\t|{1}|\t|{2}||", dash2, dash2, dash2);
 
-            Console.WriteLine("||{0,-30}|\t|{1,-30}|\t|{2,-30}||", paxFor1, paxFor2, paxFor3);
-            Console.WriteLine("||{0,-30}|\t|{1,-30}|\t|{2,-30}||", perRate1, perRate2, perRate3);
-            Console.WriteLine("||{0,-30}|\t|{1,-30}|\t|{2,-30}||", xcess1, xcess2, xcess3);
+            // TOP OF CARDS (Applying Theme Color to the inner cards)
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("╔{0}╗\t╔{1}╗\t╔{2}╗", cardTop, cardTop, cardTop);
+            Console.ResetColor();
+            Console.WriteLine("|");
 
-            Console.WriteLine("|└{0}┘\t└{1}┘\t└{2}┘|", dash2,dash2,dash2);
-            Console.WriteLine("|Amenities:{0}|",amenities);
+            // ROOM NAMES
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("║{0,-30}║\t║{1,-30}║\t║{2,-30}║", "  ROOM " + rooms[0, 0], "  ROOM " + rooms[1, 0], "  ROOM " + rooms[2, 0]);
+            Console.ResetColor();
+            Console.WriteLine("|");
+
+            // DIVIDER LINE
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("╠{0}╣\t╠{1}╣\t╠{2}╣", cardTop, cardTop, cardTop);
+            Console.ResetColor();
+            Console.WriteLine("|");
+
+            // ROOM DETAILS
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("║"); Console.ResetColor(); Console.Write("{0,-30}", paxFor1); Console.ForegroundColor = themeColor; Console.Write("║\t║");
+            Console.ResetColor(); Console.Write("{0,-30}", paxFor2); Console.ForegroundColor = themeColor; Console.Write("║\t║");
+            Console.ResetColor(); Console.Write("{0,-30}", paxFor3); Console.ForegroundColor = themeColor; Console.Write("║");
+            Console.ResetColor(); Console.WriteLine("|");
+
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("║"); Console.ResetColor(); Console.Write("{0,-30}", perRate1); Console.ForegroundColor = themeColor; Console.Write("║\t║");
+            Console.ResetColor(); Console.Write("{0,-30}", perRate2); Console.ForegroundColor = themeColor; Console.Write("║\t║");
+            Console.ResetColor(); Console.Write("{0,-30}", perRate3); Console.ForegroundColor = themeColor; Console.Write("║");
+            Console.ResetColor(); Console.WriteLine("|");
+
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("║"); Console.ResetColor(); Console.Write("{0,-30}", xcess1); Console.ForegroundColor = themeColor; Console.Write("║\t║");
+            Console.ResetColor(); Console.Write("{0,-30}", xcess2); Console.ForegroundColor = themeColor; Console.Write("║\t║");
+            Console.ResetColor(); Console.Write("{0,-30}", xcess3); Console.ForegroundColor = themeColor; Console.Write("║");
+            Console.ResetColor(); Console.WriteLine("|");
+
+            // BOTTOM OF CARDS
+            Console.Write("|");
+            Console.ForegroundColor = themeColor;
+            Console.Write("╚{0}╝\t╚{1}╝\t╚{2}╝", cardTop, cardTop, cardTop);
+            Console.ResetColor();
+            Console.WriteLine("|");
+
+            // AMENITIES FOOTER
+             Console.Write("| Amenities: ");
+            
+            if (title == "LUXURY")
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            else if (title == "STANDARD")
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+            // 98 is the remaining width (109 total - 11 for "Amenities: ")
+            Console.Write("{0,-98}", amenities);
+            
+            Console.ResetColor();
+            Console.WriteLine(" |");
             Console.WriteLine("└{0}┘", dash);
         }
-        
+
         public static void DisplayAvailableRooms()
         {
             // LUXURY ROOMS
             Room.DesignDraw(Program.luxuryRooms, "LUXURY");
-        
+
             // STANDARD ROOMS
-            Room.DesignDraw(Program.standardRooms,"STANDARD");
-            
+            Room.DesignDraw(Program.standardRooms, "STANDARD");
+
         }
 
         public static void SetDesigned(ref string[,] luxuryRooms, ref string[,] standardRooms)
@@ -113,6 +203,7 @@ namespace HMIA
                                           "₱500"}
             };
         }
+
         public static void Sets(ref string[,] luxuryRooms, ref string[,] standardRooms)
         {
             luxuryRooms = new string[10, 2];
@@ -128,8 +219,7 @@ namespace HMIA
 
         }
 
-
-        public static void UpdateRoomStatus(string roomCode,ref int availableCtrLuxRom,ref int availableCtrStandRom,bool available)
+        public static void UpdateRoomStatus(string roomCode, ref int availableCtrLuxRom, ref int availableCtrStandRom, bool available)
         {
             string romType = roomCode.ToUpper().Substring(0, 1);
             if (romType == "L")
@@ -148,7 +238,7 @@ namespace HMIA
                             Program.luxuryRooms[i, 1] = "1";
                             availableCtrLuxRom--;
                         }
-                        
+
                         break;
                     }
                 }
@@ -169,17 +259,18 @@ namespace HMIA
                             Program.standardRooms[i, 1] = "1";
                             availableCtrStandRom--;
                         }
-                        
+
                         break;
                     }
                 }
             }
         }
 
-        public static int Index(string roomNumber,string[,] roomType)
+        public static int Index(string roomNumber, string[,] roomType)
         {
-            if (roomNumber != "") {
-                for (int i = 0; i<roomType.GetLength(0);i++)
+            if (roomNumber != "")
+            {
+                for (int i = 0; i < roomType.GetLength(0); i++)
                 {
                     if (roomType[i, 0] == roomNumber.ToString().ToUpper())
                         return i;
@@ -187,6 +278,43 @@ namespace HMIA
             }
             return -1;
         }
-        
+
+        public static bool NotAvailable(string roomNumber, string checkIn, string checkOut, int index = -1)
+        {
+            bool isExist = false;
+            if (Program.tenants.GetLength(0) > 0)
+            {
+                for (int i = 0; i < Program.tenants.GetLength(0); i++)
+                {
+
+                    DateTime _date1 = DateTime.Parse(checkIn);
+                    DateTime _date2 = DateTime.Parse(checkOut);
+
+                    DateTime dataDate1 = DateTime.Parse(Program.tenants[i, 6]);
+                    DateTime dataDate2 = DateTime.Parse(Program.tenants[i, 7]);
+                    if (roomNumber.ToUpper() == Program.tenants[i, 4].ToUpper() &&
+                    ((_date1 >= dataDate1 && _date1 < dataDate2) ||
+                    (_date1 <= dataDate1 && _date1 < dataDate2)))
+                    {
+                        if (index == -1)
+                        {
+                            isExist = true;
+                            break;
+                        }
+                        else if (index > -1 && i != index)
+                        {
+                            isExist = true;
+                            break;
+                        }
+
+                    }
+
+
+                }
+            }
+
+            return isExist;
+        }
+
     }
 }

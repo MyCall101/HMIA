@@ -9,7 +9,7 @@ namespace HMIA
 {
     internal class Validate
     {
-        public static void InputLength(ref bool isValid,string _value,int _min,int _max,string fieldName,int fieldNumber,int defFieldNumber)
+        public static void InputLength(ref bool isValid, string _value, int _min, int _max, string fieldName, int fieldNumber, int defFieldNumber)
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
             {
@@ -19,7 +19,7 @@ namespace HMIA
                 {
                     if (valueLength < _min || valueLength > _max)
                     {
-                        Console.WriteLine("\n\t-> {0} : should have minimum of {1} & maximum of {2} character.", 
+                        Console.WriteLine("\n\t-> {0} : should have minimum of {1} & maximum of {2} character.",
                                         fieldName, _min, _max);
                         isValid = false;
                     }
@@ -32,12 +32,12 @@ namespace HMIA
             if (_value.Trim() == "") isValid = false;
 
         }
-        public static void InputCharacter(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber,string[] validChar)
+        public static void InputCharacter(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber, string[] validChar)
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
             {
                 int index = validChar.ToList().IndexOf(_value.ToUpper());
-                if(index < 0)
+                if (index < 0)
                 {
                     Console.WriteLine("\n\t-> {0} : Invalid choice.", fieldName);
                     isValid = false;
@@ -54,7 +54,7 @@ namespace HMIA
                 bool valid = DateTime.TryParseExact(_value, "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _date);
                 if (!valid)
                 {
-                    Console.WriteLine("\n\t-> {0} : Invalid date.",fieldName);
+                    Console.WriteLine("\n\t-> {0} : Invalid date.", fieldName);
                     isValid = false;
                 }
             }
@@ -68,9 +68,9 @@ namespace HMIA
                 DateTime _date1 = DateTime.Parse(_value);
                 DateTime _date2 = DateTime.Parse(_value2);
 
-                if(_date1 < _date2 || (fieldName == "CHECK-OUT" && _date1 <= _date2))
+                if (_date1 < _date2 || (fieldName == "CHECK-OUT" && _date1 <= _date2))
                 {
-                    if(fieldName == "CHECK-OUT")
+                    if (fieldName == "CHECK-OUT")
                     {
                         Console.WriteLine("\n\t-> {0} : date should be future dates.", fieldName);
                         isValid = false;
@@ -80,7 +80,7 @@ namespace HMIA
                         Console.WriteLine("\n\t-> {0} : date should be current or future dates.", fieldName);
                         isValid = false;
                     }
-                    
+
                 }
             }
             if (_value.Trim() == "") isValid = false;
@@ -94,11 +94,12 @@ namespace HMIA
                 float v1 = float.Parse(_value);
                 float v2 = float.Parse(_value2);
 
-                if( v1 < v2)
+                if (v1 < v2)
                 {
                     Console.WriteLine("\n\t-> {0} : Check amount.", fieldName);
                     isValid = false;
-                }else if(process == "1" && v1 != v2)
+                }
+                else if (process == "1" && v1 != v2)
                 {
                     Console.WriteLine("\n\t-> {0} : Amount should be equal in reserved process.", fieldName);
                     isValid = false;
@@ -107,15 +108,15 @@ namespace HMIA
             if (_value.Trim() == "") isValid = false;
         }
 
-        public static void RoomAvailable(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber,bool occupant = false)
+        public static void RoomAvailable(ref bool isValid, string _value, string fieldName, int fieldNumber, int defFieldNumber, bool occupant = false)
         {
             if (isValid && fieldNumber == defFieldNumber && _value.Trim() != "")
             {
                 bool isAvailable = true;
-                for(int i = 0; i < Program.luxuryRooms.GetLength(0); i++)
+                for (int i = 0; i < Program.luxuryRooms.GetLength(0); i++)
                 {
-                    if (Program.luxuryRooms[i,0].ToString().ToUpper() == _value.ToUpper() &&
-                        Program.luxuryRooms[i,1] != "0")
+                    if (Program.luxuryRooms[i, 0].ToString().ToUpper() == _value.ToUpper() &&
+                        Program.luxuryRooms[i, 1] != "0")
                     {
                         isAvailable = false;
                         break;
@@ -138,15 +139,16 @@ namespace HMIA
                 {
                     Console.WriteLine("\n\t-> {0} : Room not available.", fieldName);
                     isValid = false;
-                }else if (isAvailable && occupant)
+                }
+                else if (isAvailable && occupant)
                 {
                     Console.WriteLine("\n\t-> {0} : No occupants.", fieldName);
                     isValid = false;
                 }
-                    
+
             }
             if (_value.Trim() == "") isValid = false;
         }
-        
+
     }
 }

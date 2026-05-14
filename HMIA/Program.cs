@@ -8,6 +8,7 @@ using System.Runtime.Remoting.Lifetime;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace HMIA
 {
@@ -38,7 +39,7 @@ namespace HMIA
 
             //Room.Sets(ref luxuryRooms, ref standardRooms);
             Room.SetDesigned(ref luxuryRooms, ref standardRooms);
-            
+
             DeterminedUser();
             //DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms);
 
@@ -51,14 +52,18 @@ namespace HMIA
         {
             Console.Clear();
             DisplayWelcome();
-            string dash = String.Concat(Enumerable.Repeat("-",24));
-            Console.WriteLine("\t\t\t┌{0}┐",dash);
-            Console.WriteLine("\t\t\t|  [1] - FRONT DESK\t |");
-            Console.WriteLine("\t\t\t|  [2] - GUEST\t\t |");
-            Console.WriteLine("\t\t\t|  [3] - EXIT\t\t |");
-            Console.WriteLine("\t\t\t└{0}┘\n",dash);
-            char role = DynamicInputs<char>("\n\tPlease Identify your self: ",0);
-            if(role == '1' || role == '2')
+            string dash = String.Concat(Enumerable.Repeat("═", 24));
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\t\t\t╔{0}╗", dash);
+            Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [1] - FRONT DESK\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [2] - GUEST\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [3] - EXIT\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.WriteLine("\t\t\t╚{0}╝\n", dash);
+            Console.ResetColor();
+
+            char role = DynamicInputs<char>("\n\tPlease Identify your self: ", 0);
+            if (role == '1' || role == '2')
             {
                 Console.Clear();
                 DisplayMenu(ref tenants, ref luxuryRooms, ref standardRooms, role);
@@ -71,44 +76,59 @@ namespace HMIA
 
         }
 
-        static void DisplayMenu(ref string[,] tenants, ref string[,] luxuryRooms, ref string[,] standardRooms,char role)
+        static void DisplayMenu(ref string[,] tenants, ref string[,] luxuryRooms, ref string[,] standardRooms, char role)
         {
-            string dash = String.Concat(Enumerable.Repeat("-",32));
+            string dash = String.Concat(Enumerable.Repeat("═", 32));
             bool start = true;
             do
             {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                string mainLogo = @"
 
-                Console.WriteLine("\n\t\t\t┌{0}┐",dash);
-                Console.WriteLine("\t\t\t|  [1] - RESERVE ROOM\t\t |");
-                if(role == '2') Console.WriteLine("\t\t\t|  [2] - MAIN MENU\t\t |");
+██╗      █████╗ ██████╗  █████╗  ██╗███████╗    ██╗  ██╗ ██████╗ ████████╗███████╗██╗     
+██║     ██╔══██╗██╔══██╗██╔══██╗ ╚═╝██╔════╝    ██║  ██║██╔═══██╗╚══██╔══╝██╔════╝██║     
+██║     ███████║██████╔╝███████║    ███████╗    ███████║██║   ██║   ██║   █████╗  ██║     
+██║     ██╔══██║██╔══██╗██╔══██║    ╚════██║    ██╔══██║██║   ██║   ██║   ██╔══╝  ██║     
+███████╗██║  ██║██║  ██║██║  ██║    ███████║    ██║  ██║╚██████╔╝   ██║   ███████╗███████╗
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝    ╚══════╝    ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝";
+                Console.WriteLine("\n" + mainLogo);
+
+                Console.WriteLine("\n\t\t\t╔{0}╗", dash);
+                Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [1] - RESERVE ROOM\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+
+                if (role == '2')
+                {
+                    Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [2] - MAIN MENU\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                }
 
                 if (role == '1')
                 {
-                    Console.WriteLine("\t\t\t|  [2] - WALK IN\t\t |");
-                    Console.WriteLine("\t\t\t|  [3] - SEARCH\t\t\t |");
-                    Console.WriteLine("\t\t\t|  [4] - VIEW ALL OCCUPANTS\t |");
-                    Console.WriteLine("\t\t\t|  [5] - VIEW ROOMS AVAILBLE\t |");
-                    Console.WriteLine("\t\t\t|  [6] - CHECK-OUT\t\t |");
-                    Console.WriteLine("\t\t\t|  [7] - MAIN MENU\t\t |");
+                    Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [2] - WALK IN\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [3] - SEARCH\t\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [4] - VIEW ALL OCCUPANTS\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    //Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [5] - VIEW ROOMS AVAILBLE\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    //Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [6] - CHECK-OUT\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("  [5] - MAIN MENU\t\t "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
                 }
-                
 
-                Console.WriteLine("\t\t\t└{0}┘\n",dash);
+                Console.WriteLine("\t\t\t╚{0}╝\n", dash);
+                Console.ResetColor();
+
                 char process = DynamicInputs<char>("\tPlease choose process: ", 1);
                 Console.WriteLine("Process : " + process);
 
                 if (role == '1' || role == '2')
                 {
                     Console.Clear();
-                    if (process == '1' || (role == '1' && process=='2'))
+                    if (process == '1' || (role == '1' && process == '2'))
                     {
-                        
+
                         Room.DisplayAvailableRooms();
-                        if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
-                        {
-                            Process(role,ref tenants, process);
-                            
-                        }
+                        //if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
+                        //{
+                            Process(role, ref tenants, process);
+
+                        //}
                     }
                     if (role == '1')
                     {
@@ -122,27 +142,27 @@ namespace HMIA
                             //VIEW ALL OCCUPANTS
                             Occupants.ViewInfo(role);
                         }
-                        else if (process == '5')
-                        {
-                            //VIEW AVAILABLE ROOM
-                            Room.DisplayAvailableRooms();
-                        }
-                        else if (process == '6')
-                        {
-                            //CHECK OUT
-                            if(availableCtrLuxRom <3 || availableCtrStandRom < 3 )
-                                RoomCheckOut();
-                            
-                        }
+                        //else if (process == '5') 
+                        //{
+                        //    //VIEW AVAILABLE ROOM
+                        //    Room.DisplayAvailableRooms();
+                        //}
+                        //else if (process == '6')
+                        //{
+                        //    //CHECK OUT
+                        //    if (availableCtrLuxRom < 3 || availableCtrStandRom < 3)
+                        //        RoomCheckOut();
+
+                        //}
                     }
-                    if ((role == '2' && process == '2') || (role == '1' && process == '7'))
+                    if ((role == '2' && process == '2') || (role == '1' && process == '5'))
                     {
                         start = false;
                         //back to identify yourself
                         DeterminedUser();
-                        
+
                     }
-                    
+
                 }
             } while (start);
 
@@ -150,41 +170,54 @@ namespace HMIA
 
         static void RoomCheckOut()
         {
-            string roomNumber = DynamicInputs<string>("\n\tEnter room number: ", 4,"","",true);
+            string roomNumber = DynamicInputs<string>("\n\tEnter room number: ", 4, "", "", true);
             tenants = Occupants.CheckOUT(roomNumber);
-            Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom,true);
+            Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, true);
             DisplayFarewell();
             Console.WriteLine("\n\tPress anykey to continue...");
             Console.ReadKey();
         }
-        
+
         static void SearchMethod(ref string[,] tenants, ref string[,] luxuryRooms, ref string[,] standardRooms, char role)
         {
             bool isSearch = true;
             do
             {
                 Console.Clear();
-                string dash = string.Concat(Enumerable.Repeat("-", 28));
-                Console.WriteLine("\t\t\t┌{0}┐",dash);
-                Console.WriteLine("\t\t\t|[O] - OCCUPANTS/ROOM NUMBER |");
-                Console.WriteLine("\t\t\t|{0,-28}|", "[D] - DATES");
-                Console.WriteLine("\t\t\t|{0,-28}|", "[X] - BACK TO PROCESS");
-                Console.WriteLine("\t\t\t└{0}┘",dash);
-                char choose = DynamicInputs<char>("\tPlease choose search by: ",10);
+                string dash = string.Concat(Enumerable.Repeat("═", 28));
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+
+                Console.WriteLine("\t\t\t░█▀▀░█▀▀░█▀█░█▀▄░█▀▀░█░█");
+                Console.WriteLine("\t\t\t░▀▀█░█▀▀░█▀█░█▀▄░█░░░█▀█");
+                Console.WriteLine("\t\t\t░▀▀▀░▀▀▀░▀░▀░▀░▀░▀▀▀░▀░▀");
+
+                Console.WriteLine("\n\t\t\t╔{0}╗", dash);
+                Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("[O] - OCCUPANTS/ROOM NUMBER "); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("{0,-28}", "[D] - DATES"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                Console.Write("\t\t\t║"); Console.ResetColor(); Console.Write("{0,-28}", "[X] - BACK TO PROCESS"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                Console.WriteLine("\t\t\t╚{0}╝", dash);
+                Console.ResetColor();
+
+                char choose = DynamicInputs<char>("\tPlease choose search by: ", 10);
                 if (char.ToUpper(choose) == 'O')
                 {
                     Console.Write("\n\tPlease enter Firstname or Lastname or Room number: ");
-                    string name = Console.ReadLine();
-                    SearchBy(choose, name,role);
+                    string input = Console.ReadLine();
+                    SearchByV2(choose, input, role);
+                    //SearchBy(choose, name, role);
                     Console.WriteLine("\n\tPress any key to continue...");
                 }
                 else if (char.ToUpper(choose) == 'D')
                 {
-                   
-                    string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
-                    string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
-                    
-                    SearchBy(choose, checkIn, checkOut, role);
+
+                    string dates = DynamicInputs<string>("\n\tEnter date (MM-dd-yyyy): ", 17);
+
+                    //string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                    //string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+
+                    //SearchBy(choose, checkIn, checkOut, role);
+                    SearchByV2(choose,dates,role);
 
                     Console.WriteLine("\n\tPress anykey to continue...");
                 }
@@ -198,9 +231,139 @@ namespace HMIA
                 Console.ReadKey();
 
             } while (isSearch);
-            
+
         }
 
+        static void SearchByV2(char by,string value, char role)
+        {
+            bool found = false;
+            if (tenants.GetLength(0) > 0)
+            {
+                string[,] temp = new string[tenants.GetLength(0), 10];
+                int x = 0;
+                for (int i = 0; i < tenants.GetLength(0); i++)
+                {
+                    if (by.ToString().ToUpper() == "D")
+                    {
+                        DateTime _dates = DateTime.Parse(value);
+
+                        DateTime dataDate1 = DateTime.Parse(Program.tenants[i, 6]);
+                        DateTime dataDate2 = DateTime.Parse(Program.tenants[i, 7]);
+                        
+                        if (_dates >= dataDate1 && _dates <= dataDate2)
+                        {
+                            temp[x, 0] = tenants[i, 0];
+                            temp[x, 1] = tenants[i, 1];
+                            temp[x, 2] = tenants[i, 2];
+                            temp[x, 3] = tenants[i, 3];
+                            temp[x, 4] = tenants[i, 4];
+                            temp[x, 5] = tenants[i, 5];
+                            temp[x, 6] = tenants[i, 6];
+                            temp[x, 7] = tenants[i, 7];
+                            temp[x, 8] = tenants[i, 8];
+                            temp[x, 9] = tenants[i, 9];
+                            found = true;
+                            x++;
+                        }
+
+                    }
+                    else if (by.ToString().ToUpper() == "O")
+                    {
+                        if (value.ToUpper() == tenants[i, 2].ToUpper() || value.ToUpper() == tenants[i, 3].ToUpper() ||
+                        value.ToUpper() == tenants[i, 4].ToUpper())
+                        {
+                            temp[x, 0] = tenants[i, 0];
+                            temp[x, 1] = tenants[i, 1];
+                            temp[x, 2] = tenants[i, 2];
+                            temp[x, 3] = tenants[i, 3];
+                            temp[x, 4] = tenants[i, 4];
+                            temp[x, 5] = tenants[i, 5];
+                            temp[x, 6] = tenants[i, 6];
+                            temp[x, 7] = tenants[i, 7];
+                            temp[x, 8] = tenants[i, 8];
+                            temp[x, 9] = tenants[i, 9];
+                            found = true;
+                            x++;
+                        }
+                    }
+                }
+
+                if (found)
+                {
+                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("═", 133)) : String.Concat(Enumerable.Repeat("═", 115));
+                    string dash2 = (role == '1') ? String.Concat(Enumerable.Repeat("-", 133)) : String.Concat(Enumerable.Repeat("-", 115));
+
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n\t╔{0}╗", dash);
+
+                    Console.Write("\t║"); Console.ResetColor();
+                    if (role == '1')
+                    {
+                        Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID", "TOTAL", "CHANGE", "PROCESS_TYPE", "ROLE");
+
+                    }
+                    else
+                    {
+                        Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID", "TOTAL", "CHANGE");
+
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    Console.WriteLine("\t╠{0}╣", dash);
+                    Console.ResetColor();
+
+                    for (int n = 0; n < temp.GetLength(0); n++)
+                    {
+                        if (temp[n, 0] != null)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Cyan; Console.Write("\t║"); Console.ResetColor();
+                            if (role == '1')
+                            {
+                                Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}",
+                                    temp[n, 2] + " " + temp[n, 3], temp[n, 4],
+                                    temp[n, 5], temp[n, 6], temp[n, 7],
+                                    "₱" + temp[n, 8], "₱" + temp[n, 9],
+                                    "₱" + (float.Parse(temp[n, 8]) - float.Parse(temp[n, 9])).ToString(),
+                                    temp[n, 1], temp[n, 0]);
+                            }
+                            else
+                            {
+                                Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}",
+                                    temp[n, 2] + " " + temp[n, 3], temp[n, 4],
+                                    temp[n, 5], temp[n, 6], temp[n, 7],
+                                    "₱" + temp[n, 8], "₱" + temp[n, 9],
+                                    "₱" + (float.Parse(temp[n, 8]) - float.Parse(temp[n, 9])).ToString());
+                            }
+                            Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+
+                            if (n != (temp.GetLength(0) - 1))
+                                if (temp[n + 1, 0] != null)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine("\t╟{0}╢", dash2);
+                                    Console.ResetColor();
+
+                                }
+
+                        }
+
+                    }
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\t╚{0}╝\n", dash);
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.WriteLine("\n\t -> No Record Found.");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("\n\t -> No Data.");
+            }
+        }
         static void SearchBy(char by, string value, string value2, char role)
         {
             bool found = false;
@@ -211,15 +374,15 @@ namespace HMIA
                 {
                     if (by.ToString().ToUpper() == "D")
                     {
-                        DateTime _date1, _date2,_checkin,_checkout;
-                        bool valid1 = DateTime.TryParseExact(value,"MM-dd-yyyy",CultureInfo.InvariantCulture,DateTimeStyles.None ,out _date1);
+                        DateTime _date1, _date2, _checkin, _checkout;
+                        bool valid1 = DateTime.TryParseExact(value, "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _date1);
                         bool valid2 = DateTime.TryParseExact(value2, "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _date2);
                         bool valid3 = DateTime.TryParseExact(tenants[i, 6], "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _checkin);
                         bool valid4 = DateTime.TryParseExact(tenants[i, 7], "MM-dd-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _checkout);
-                        if (valid1 && valid2 && valid3 && valid4) {
+                        if (valid1 && valid2 && valid3 && valid4)
+                        {
                             if (_checkin == _date1 && _checkout == _date2)
                             {
-                                //Occupants.ViewInfo(role, by.ToString(), i);
                                 temp[i, 0] = tenants[i, 0];
                                 temp[i, 1] = tenants[i, 1];
                                 temp[i, 2] = tenants[i, 2];
@@ -231,38 +394,45 @@ namespace HMIA
                                 temp[i, 8] = tenants[i, 8];
                                 temp[i, 9] = tenants[i, 9];
                                 found = true;
-                                //break;
                             }
                         }
-                        
+
                     }
                 }
 
                 if (found)
                 {
-                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("-", 133)) : String.Concat(Enumerable.Repeat("-", 115));
-                    Console.WriteLine("\n\t┌{0}┐", dash);
-                    
+                    string dash = (role == '1') ? String.Concat(Enumerable.Repeat("═", 133)) : String.Concat(Enumerable.Repeat("═", 115));
+                    string dash2 = (role == '1') ? String.Concat(Enumerable.Repeat("-", 133)) : String.Concat(Enumerable.Repeat("-", 115));
+
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\n\t╔{0}╗", dash);
+
+                    Console.Write("\t║"); Console.ResetColor();
                     if (role == '1')
                     {
-                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "CHANGE", "PROCESS_TYPE", "ROLE");
+                        Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID", "TOTAL", "CHANGE", "PROCESS_TYPE", "ROLE");
 
                     }
                     else
                     {
-                        Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
-                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID","TOTAL", "CHANGE");
+                        Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}",
+                            "NAME", "ROOM_CODE", "PAXS", "CHECK-IN", "CHECK-OUT", "PAID", "TOTAL", "CHANGE");
 
                     }
-                    Console.WriteLine("\t|{0}|", dash);
-                    for (int n=0;n<temp.GetLength(0);n++)
+                    Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                    Console.WriteLine("\t╠{0}╣", dash);
+                    Console.ResetColor();
+
+                    for (int n = 0; n < temp.GetLength(0); n++)
                     {
-                        if (temp[n,0]!=null)
+                        if (temp[n, 0] != null)
                         {
+                            Console.ForegroundColor = ConsoleColor.Cyan; Console.Write("\t║"); Console.ResetColor();
                             if (role == '1')
                             {
-                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}|",
+                                Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}{8,-14}{9,-12}",
                                     temp[n, 2] + " " + temp[n, 3], temp[n, 4],
                                     temp[n, 5], temp[n, 6], temp[n, 7],
                                     "₱" + temp[n, 8], "₱" + temp[n, 9],
@@ -271,26 +441,34 @@ namespace HMIA
                             }
                             else
                             {
-                                Console.WriteLine("\t|{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}|",
+                                Console.Write("{0,-30}{1,-11}{2,-7}{3,-12}{4,-12}{5,-10}{6,-10}{7,-15}",
                                     temp[n, 2] + " " + temp[n, 3], temp[n, 4],
                                     temp[n, 5], temp[n, 6], temp[n, 7],
                                     "₱" + temp[n, 8], "₱" + temp[n, 9],
                                     "₱" + (float.Parse(temp[n, 8]) - float.Parse(temp[n, 9])).ToString());
                             }
+                            Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
 
                             if (n != (temp.GetLength(0) - 1))
-                                if (temp[n+1,0] != null)
-                                    Console.WriteLine("\t|{0}|", dash); 
+                                if (temp[n + 1, 0] != null)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Cyan;
+                                    Console.WriteLine("\t╟{0}╢", dash2);
+                                    Console.ResetColor();
+                                }
+
                         }
-                        
+
                     }
-                    Console.WriteLine("\t└{0}┘\n", dash);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("\t╚{0}╝\n", dash);
+                    Console.ResetColor();
                 }
                 else
                 {
                     Console.WriteLine("\n\t -> No Record Found.");
                 }
-                    
+
             }
             else
             {
@@ -298,106 +476,137 @@ namespace HMIA
             }
         }
 
-        static void SearchBy(char by,string value,char role)
+        static void SearchBy(char by, string value, char role)
         {
             bool found = false;
-            if (tenants.GetLength(0)>0)
+            if (tenants.GetLength(0) > 0)
             {
-                for (int i=0;i<tenants.GetLength(0);i++)
+                for (int i = 0; i < tenants.GetLength(0); i++)
                 {
-                    if(by.ToString().ToUpper() == "O")
+                    if (by.ToString().ToUpper() == "O")
                     {
                         if (value.ToUpper() == tenants[i, 2].ToUpper() || value.ToUpper() == tenants[i, 3].ToUpper() ||
                             value.ToUpper() == tenants[i, 4].ToUpper())
                         {
-                            Occupants.ViewInfo(role,by.ToString(),i);
+                            Occupants.ViewInfo(role, by.ToString(), i);
                             found = true;
                             break;
                         }
                     }
-                    
+
                 }
-                if(!found)
+                if (!found)
                     Console.WriteLine("\n\t -> No Record Found.");
             }
-            else{
+            else
+            {
                 Console.WriteLine("\n\t -> No Data.");
             }
         }
 
-        
-        static void Process(char role,ref string[,] tenants,char process)
+
+        static void Process(char role, ref string[,] tenants, char process)
         {
             bool start = true;
             do
             {
                 string[] addTenants;
+                string ask = "Y";
+                string roomNumber = "";
+                string checkIn = "";
+                string checkOut = "";
+                do
+                {
+                    roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
+                    checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                    checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+                    if (Room.NotAvailable(roomNumber, checkIn, checkOut))
+                    {
+                        Console.WriteLine("\n\t -> Room not available this dates.");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                } while (ask == "Y");
+                
+
                 string fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ", 2);
                 string lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ", 3);
-                string roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
+                
                 int pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
-                string checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
-                string checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7,checkIn);
+                
                 int duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
                 float amount = GetAmountToPay(roomNumber, duration, pax);
-                Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));//F2 = two decimal places, N0 = 1,000
-                float payment = DynamicInputs<float>("\n\tPayment: ₱", 8,amount.ToString(),process.ToString());
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                Console.ResetColor();
+
+                float payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
 
                 char confirm = DynamicInputs<char>("\n\tConfirm reserve booking (Y/N)?: ", 9);
 
-                string dash = string.Concat(Enumerable.Repeat("-",25));
+                string dash = string.Concat(Enumerable.Repeat("═", 25));
                 if (char.ToUpper(confirm) == 'Y')
                 {
-                    if (!Occupants.BookExist(fname,lname,checkIn,checkOut))
+                    if (!Occupants.BookExist(fname, lname, checkIn, checkOut))
                     {
                         addTenants = new string[] {GetRole(role.ToString()),ProcDescription(process.ToString()), fname, lname,roomNumber.ToUpper(), pax.ToString(), checkIn, checkOut,
                          payment.ToString(),amount.ToString()};
 
                         Occupants.AddNew(ref tenants, addTenants);
-                        Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
+                        //Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
 
-                        Occupants.Receipt(fname,lname,roomNumber,pax,checkIn,checkOut,duration,payment,process);
+                        Occupants.Receipt(fname, lname, roomNumber, pax, checkIn, checkOut, duration, payment, process);
 
-                        if(process == '1')
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        if (process == '1')
                         {
-                            Console.WriteLine("\n\t\t->Reservation confirmed.<-");
+                            Console.WriteLine("\n\t\t-> Reservation confirmed! <-");
                         }
                         else
                         {
-                            Console.WriteLine("\n\t\t->Success! You've booked a room.<-");
+                            Console.WriteLine("\n\t\t-> Success! You've booked a room. <-");
                         }
-                        
-                        //Room.DisplayAvailableRooms(ref availableCtrLuxRom, ref availableCtrStandRom);
-                        Console.WriteLine("\n\tPress anykey to continue...");
+                        Console.ResetColor();
+
+                        Console.WriteLine("\n\tPress any key to continue...");
                         Console.ReadKey();
 
                         bool isAsking = true;
                         do
                         {
                             Console.Clear();
-                            Console.WriteLine("\n\t\t┌{0}┐", dash);
-                            Console.WriteLine("\t\t|{0,-25}|", "[1] - UPDATE BOOKING");
-                            Console.WriteLine("\t\t|{0,-25}|", "[2] - BOOK AGAIN");
-                            Console.WriteLine("\t\t|{0,-25}|", "[3] - EXIT");
-                            Console.WriteLine("\t\t└{0}┘", dash);
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine("\n\t\t╔{0}╗", dash);
+                            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [1] - UPDATE BOOKING"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [2] - BOOK AGAIN"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [3] - EXIT"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+                            Console.WriteLine("\t\t╚{0}╝", dash);
+                            Console.ResetColor();
 
                             char choose = DynamicInputs<char>("\n\tChoose action: ", 12);
+
                             switch (choose)
                             {
                                 case '1':
+                                    Console.Clear();
                                     UpdateBooking(role, ref tenants);
                                     start = false;
                                     break;
                                 case '2':
+                                    Console.Clear();
                                     start = true;
 
-                                    if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
-                                    {
+                                    //if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
+                                    //{
                                         isAsking = false;
                                         Room.DisplayAvailableRooms();
-                                    }
+                                    //}
                                     break;
-                                case '3':
+                                case '3': //exit
+                                    Console.Clear();
                                     start = false;
                                     isAsking = false;
                                     break;
@@ -406,35 +615,47 @@ namespace HMIA
                     }
                     else
                     {
-                        Console.WriteLine("\n\t-> Before saving checking information,booking already exist.!");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("\n\t-> Before saving checking information, booking already exists!");
+                        Console.ResetColor();
                     }
-                    
+
                 }
 
             } while (start);
-            
+
         }
 
         static void UpdateBooking(char role, ref string[,] tenants)
         {
-            string dash = string.Concat(Enumerable.Repeat("-", 25));
-           
+            string dash = string.Concat(Enumerable.Repeat("═", 25));
+
             Console.Clear();
-            Console.WriteLine("\n\t\t┌{0}┐", dash);
-            Console.WriteLine("\t\t|{0,-25}|","UPDATE" );
-            Console.WriteLine("\t\t|{0}|", dash);
-            Console.WriteLine("\t\t|{0,-25}|", "[1] - FIRST NAME");
-            Console.WriteLine("\t\t|{0,-25}|", "[2] - LAST NAME");
-            Console.WriteLine("\t\t|{0,-25}|", "[3] - ROOM NUMBER");
-            Console.WriteLine("\t\t|{0,-25}|", "[4] - NUMBER OF PAX");
-            Console.WriteLine("\t\t|{0,-25}|", "[5] - CHECK-IN & OUT");
-            Console.WriteLine("\t\t|{0,-25}|", "[6] - EXIT");
-            Console.WriteLine("\t\t└{0}┘", dash);
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+
+            Console.WriteLine("\t\t ░█░█░█▀█░█▀▄░█▀█░▀█▀░█▀▀");
+            Console.WriteLine("\t\t ░█░█░█▀▀░█░█░█▀█░░█░░█▀▀");
+            Console.WriteLine("\t\t ░▀▀▀░▀░░░▀▀░░▀░▀░░▀░░▀▀▀");
+
+            Console.WriteLine("\n\t\t╔{0}╗", dash);
+            Console.Write("\t\t║"); Console.ForegroundColor = ConsoleColor.Yellow; Console.Write("{0,-25}", " UPDATE"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.WriteLine("\t\t╠{0}╣", dash);
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [1] - BOOKING"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [2] - FIRST NAME"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [3] - LAST NAME"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            //Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [3] - ROOM NUMBER"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [4] - NUMBER OF PAX"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            //Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [5] - CHECK-IN & OUT"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("{0,-25}", " [5] - EXIT"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.WriteLine("\t\t╚{0}╝", dash);
+            Console.ResetColor();
 
             char choose = DynamicInputs<char>("\tPlease choice info to update: ", 13);
             int index = tenants.GetLength(0) - 1;
-            
-            
+
+
             string tmpFname = tenants[index, 2];
             string tmpLname = tenants[index, 3];
             string tmpRom = tenants[index, 4];
@@ -453,45 +674,73 @@ namespace HMIA
             string checkOut = tenants[index, 7];
 
             int duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
-            
+
             float payment = float.Parse(tenants[index, 8]);
             float amount = float.Parse(tenants[index, 9]);//GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
 
+            string ask = "Y";
             switch (choose)
             {
                 case '1':
+                    
+                    do
+                    {
+                        roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
+                        checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                        checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+                        if (Room.NotAvailable(roomNumber, checkIn, checkOut,tenants.GetLength(0)-1))
+                        {
+                            Console.WriteLine("\n\t -> Room not available this dates.");
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    } while (ask == "Y");
+
+                    duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
+                    amount = GetAmountToPay(roomNumber, duration, pax);
+                    Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
+                    if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
+                    {
+                        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
+
+                    }
+                    break;
+                case '2':
                     fname = DynamicInputs<string>("\n\tPlease enter your Firstname: ", 2);
                     //tenants[index, 2] = fname;
                     if (!Occupants.BookExist(fname, lname, checkIn, checkOut, index))
                         Console.WriteLine("\n\t-> Update Firstname from {0} to {1}", tmpFname, fname);
                     break;
-                case '2':
+                case '3':
                     lname = DynamicInputs<string>("\n\tPlease enter your Lastname: ", 3);
                     //tenants[index, 3] = lname;
                     if (!Occupants.BookExist(fname, lname, checkIn, checkOut, index))
-                        Console.WriteLine("\n\t-> Update Lastname from {0} to {1}",tmpLname,lname);
+                        Console.WriteLine("\n\t-> Update Lastname from {0} to {1}", tmpLname, lname);
                     break;
-                case '3':
-                    if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
-                    {
-                        roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
+                //case '3':
+                //    if (availableCtrLuxRom > 0 || availableCtrStandRom > 0)
+                //    {
+                //        roomNumber = DynamicInputs<string>("\n\tPlease choose room number: ", 4);
 
-                        amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
+                //        amount = GetAmountToPay(roomNumber, duration, int.Parse(tenants[index, 5]));
 
-                        Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
-                        if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
-                        {
-                            Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
-                            payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
+                //        Console.WriteLine("\n\t-> Update Room number from {0} to {1}", tmpRom, roomNumber);
+                //        if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
+                //        {
+                //            Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                //            payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
 
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("\n\t-> No rooms available.!");
-                    }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        Console.WriteLine("\n\t-> No rooms available.!");
+                //    }
 
-                        break;
+                //    break;
                 case '4':
                     pax = DynamicInputs<int>("\n\tHow many pax: ", 5);
 
@@ -502,35 +751,32 @@ namespace HMIA
                     {
                         Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
                         payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
-                        //tenants[index, 8] = payment.ToString();
-                        //Occupants.Receipt(tenants[index, 2], tenants[index, 3], tenants[index, 4], int.Parse(tenants[index, 5]), tenants[index, 6],
-                        //        tenants[index, 7], duration, payment);
                     }
-                        
+
                     break;
+                //case '5':
+                //    checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
+                //    checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
+
+                //    duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
+                //    amount = GetAmountToPay(roomNumber, duration, pax);
+
+                //    Console.WriteLine("\n\t-> Update Check-in from {0} to {1} and Check-out from {2} to {3}", tmpCheckIn, checkIn, tmpCheckOut, checkOut);
+                //    if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
+                //    {
+                //        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
+                //        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
+                //    }
+                //    break;
                 case '5':
-                    checkIn = DynamicInputs<string>("\n\tCheck-In (MM-dd-yyyy): ", 6);
-                    checkOut = DynamicInputs<string>("\n\tCheck-Out (MM-dd-yyyy): ", 7, checkIn);
-
-                    duration = (DateTime.Parse(checkOut).Subtract(DateTime.Parse(checkIn))).Days;
-                    amount = GetAmountToPay(roomNumber, duration, pax);
-
-                    Console.WriteLine("\n\t-> Update Check-in from {0} to {1} and Check-out from {2} to {3}", tmpCheckIn, checkIn,tmpCheckOut,checkOut);
-                    if (float.Parse(amount.ToString().Replace(",", "")) > float.Parse(tenants[index, 8]))
-                    {
-                        Console.WriteLine("\n\tAmount to pay: ₱{0}", amount.ToString("N0"));
-                        payment = DynamicInputs<float>("\n\tPayment: ₱", 8, amount.ToString(), process.ToString());
-                    }
-                    break;
-                case '6':
                     break;
             }
 
-            if (!Occupants.BookExist(fname, lname, checkIn, checkOut,index))
+            if (!Occupants.BookExist(fname, lname, checkIn, checkOut, index))
             {
                 tenants[index, 2] = fname;
                 tenants[index, 3] = lname;
-                tenants[index, 4] = roomNumber;
+                tenants[index, 4] = roomNumber.ToUpper();
                 tenants[index, 5] = pax.ToString();
                 tenants[index, 6] = checkIn;
                 tenants[index, 7] = checkOut;
@@ -539,57 +785,103 @@ namespace HMIA
                 {
                     tenants[index, 8] = (payment - (tmpAmount - amount)).ToString();
                     tenants[index, 9] = amount.ToString();
-                }else {
+                }
+                else
+                {
                     tenants[index, 8] = payment.ToString();
                     tenants[index, 9] = amount.ToString();
                 }
 
-                if(choose == '3')
-                {
-                    Room.UpdateRoomStatus(tmpRom, ref availableCtrLuxRom, ref availableCtrStandRom, true);
-                    Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
-                }
-                
+                //if (choose == '3')
+                //{
+                //    Room.UpdateRoomStatus(tmpRom, ref availableCtrLuxRom, ref availableCtrStandRom, true);
+                //    Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
+                //}
+
 
                 Occupants.Receipt(fname, lname, roomNumber, pax, checkIn,
-                        checkOut, duration, payment,process);
+                        checkOut, duration, payment, process);
 
-                Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
-                // dito mo ilagay yong receipt display
-                
-                Console.WriteLine("\n\t\t->Updated successfully.<-");
+                //Room.UpdateRoomStatus(roomNumber, ref availableCtrLuxRom, ref availableCtrStandRom, false);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n\t\t-> Updated successfully. <-");
+                Console.ResetColor();
             }
             else
             {
-                Console.WriteLine("\n\t-> Before saving checking information,booking already exist.!");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\t-> Before saving checking information, booking already exists!");
+                Console.ResetColor();
             }
-            Console.WriteLine("\n\tPress anykey to continue...");
+            Console.WriteLine("\n\tPress any key to continue...");
             Console.ReadKey();
 
         }
-        
+
         public static void DisplayWelcome()
         {
-            string dash = string.Concat(Enumerable.Repeat("-",55));
-            Console.WriteLine("\t┌{0}┐",dash);
-            Console.WriteLine("\t|\t\t  WELCOME TO LAAR's HOTEL!\t\t|");
-            Console.WriteLine("\t|-------------------------------------------------------|");
-            Console.WriteLine("\t|\t\tWhere comfort feels like home.\t\t|");
-            Console.WriteLine("\t└{0}┘\n",dash);
+            string dash = string.Concat(Enumerable.Repeat("═", 55));
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            string logo = @"
+
+██╗      █████╗ ██████╗  █████╗  ██╗███████╗    ██╗  ██╗ ██████╗ ████████╗███████╗██╗     
+██║     ██╔══██╗██╔══██╗██╔══██╗ ╚═╝██╔════╝    ██║  ██║██╔═══██╗╚══██╔══╝██╔════╝██║     
+██║     ███████║██████╔╝███████║    ███████╗    ███████║██║   ██║   ██║   █████╗  ██║     
+██║     ██╔══██║██╔══██╗██╔══██║    ╚════██║    ██╔══██║██║   ██║   ██║   ██╔══╝  ██║     
+███████╗██║  ██║██║  ██║██║  ██║    ███████║    ██║  ██║╚██████╔╝   ██║   ███████╗███████╗
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝    ╚══════╝    ╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚══════╝╚══════╝";
+            Console.WriteLine(logo);
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string logo4 = @"";
+            Console.WriteLine(logo4);
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string logo3 = @"
+
+                ╦ ╦╔═╗╦  ╔═╗╔═╗╔╦╗╔═╗  ╔╦╗╔═╗  ╦  ╔═╗╦═╗╔═╗ ╗ ╔═╗  ╦ ╦╔═╗╔╦╗╔═╗╦  
+                ║║║║╣ ║  ║  ║ ║║║║║╣    ║ ║ ║  ║  ╠═╣╠╦╝╠═╣   ╚═╗  ╠═╣║ ║ ║ ║╣ ║  
+                ╚╩╝╚═╝╩═╝╚═╝╚═╝╩ ╩╚═╝   ╩ ╚═╝  ╩═╝╩ ╩╩╚═╩ ╩   ╚═╝  ╩ ╩╚═╝ ╩ ╚═╝╩═╝";
+            string logo5 = @"
+
+     ╷ ╷╷ ╷╭─╴╭─╮╭─╴   ╭─╴╭─╮╭┬╮╭─╴╭─╮╭─╮╶┬╴   ╭─╴╭─╴╭─╴╷  ╭─╮   ╷  ╷╷╭ ╭─╴   ╷ ╷╭─╮╭┬╮╭─╴
+     │╷│├─┤├╴ ├┬╯├╴    │  │ ││││├╴ │ │├┬╯ │    ├╴ ├╴ ├╴ │  ╰─╮   │  │├┴╮├╴    ├─┤│ ││││├╴ 
+     ╰┴╯╵ ╵╰─╴╵╰╴╰─╴   ╰─╴╰─╯╵ ╵╵  ╰─╯╵╰╴ ╵    ╵  ╰─╴╰─╴╰─╴╰─╯   ╰─╴╵╵ ╵╰─╴   ╵ ╵╰─╯╵ ╵╰─╴";
+
+
+            Console.WriteLine(logo3);
+            Console.WriteLine(logo5);
+            Console.ResetColor();
         }
+
         public static void DisplayFarewell()
         {
-            string dash = string.Concat(Enumerable.Repeat("-", 55));
-            Console.WriteLine("\t┌{0}┐", dash);
-            Console.WriteLine("\t|\t\t  THANK YOU FOR STAYING\t\t\t|");//TO LAAR's HOTEL!
-            Console.WriteLine("\t|\t\t  at LAAR's HOTEL!\t\t\t|");
-            Console.WriteLine("\t|-------------------------------------------------------|");
-            Console.WriteLine("\t|\t\tHave a safe trip.\t\t\t|");
-            Console.WriteLine("\t└{0}┘\n", dash);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string farewellLogo = @"
+                 ▀▀█▀▀ █░░█ █▀▀█ █▀▀▄ █░█   █░░█ █▀▀█ █░░█ 
+                 ░░█░░ █▀▀█ █▄▄█ █░░█ █▀▄   █▄▄█ █░░█ █░░█ 
+                 ░░▀░░ ▀░░▀ ▀░░▀ ▀░░▀ ▀░▀   ▄▄▄█ ▀▀▀▀ ░▀▀▀ 
+";
+            Console.WriteLine("\n" + farewellLogo);
+
+            string dash = string.Concat(Enumerable.Repeat("═", 55));
+            string dash2 = string.Concat(Enumerable.Repeat("-", 55));
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\t\t╔{0}╗", dash);
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("\t\t  THANK YOU FOR STAYING\t\t\t"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("\t\t  at LAAR's HOTEL!\t\t\t"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.WriteLine("\t\t╠{0}╣", dash2);
+            Console.Write("\t\t║"); Console.ResetColor(); Console.Write("\t\t  Have a safe trip.\t\t\t"); Console.ForegroundColor = ConsoleColor.Cyan; Console.WriteLine("║");
+            Console.WriteLine("\t\t╚{0}╝\n", dash);
+            Console.ResetColor();
         }
 
         // **************** RETURN METHODS ****************
-        public static float GetAmountToPay(string room,int duration,int _pax)
+        public static float GetAmountToPay(string room, int duration, int _pax)
         {
             float excessAmount = 0;
             float durationAmount = 0;
@@ -597,44 +889,45 @@ namespace HMIA
             if (room.ToString().ToUpper() == "L01")
             {
                 durationAmount = (float)duration * L01RATE;
-                
+
                 if (_pax > 1)
-                    excessAmount = (float)(_pax - 1) * LUXEXCESSPAX;
-                
-            }else if (room.ToString().ToUpper() == "L02")
+                    excessAmount = ((float)(_pax - 1) * LUXEXCESSPAX) * duration;
+
+            }
+            else if (room.ToString().ToUpper() == "L02")
             {
                 durationAmount = (float)duration * L02RATE;
 
                 if (_pax > 2)
-                    excessAmount = (float)(_pax - 2) * LUXEXCESSPAX;
+                    excessAmount = ((float)(_pax - 2) * LUXEXCESSPAX) * duration;
             }
             else if (room.ToString().ToUpper() == "L03")
             {
                 durationAmount = (float)duration * L03RATE;
 
                 if (_pax > 5)
-                    excessAmount = (float)(_pax - 5) * LUXEXCESSPAX;
+                    excessAmount = ((float)(_pax - 5) * LUXEXCESSPAX) * duration;
             }
             else if (room.ToString().ToUpper() == "S01")
             {
                 durationAmount = (float)duration * S01RATE;
 
                 if (_pax > 1)
-                    excessAmount = (float)(_pax - 1) * STANDEXCESSPAX;
+                    excessAmount = ((float)(_pax - 1) * STANDEXCESSPAX) * duration;
             }
             else if (room.ToString().ToUpper() == "S02")
             {
                 durationAmount = (float)duration * S02RATE;
 
                 if (_pax > 2)
-                    excessAmount = (float)(_pax - 2) * STANDEXCESSPAX;
+                    excessAmount = ((float)(_pax - 2) * STANDEXCESSPAX) * duration;
             }
             else if (room.ToString().ToUpper() == "S03")
             {
                 durationAmount = (float)duration * S03RATE;
 
                 if (_pax > 5)
-                    excessAmount = (float)(_pax - 5) * STANDEXCESSPAX;
+                    excessAmount = ((float)(_pax - 5) * STANDEXCESSPAX) * duration;
             }
 
             return amountToPay = durationAmount + excessAmount;
@@ -645,7 +938,8 @@ namespace HMIA
             if (role == "1")
             {
                 _type = "FRONT DESK";
-            }else if (role == "2")
+            }
+            else if (role == "2")
             {
                 _type = "GUEST";
             }
@@ -680,13 +974,17 @@ namespace HMIA
             return rmType;
         }
 
-        static T DynamicInputs<T>(string prompt,int fieldNumber,string value="",string process = "",bool occupant = false)
+        static T DynamicInputs<T>(string prompt, int fieldNumber, string value = "", string process = "", bool occupant = false)
         {
-            
+
             while (true)
             {
                 bool isValid = true;
+
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(prompt);
+                Console.ResetColor();
+
                 string input = Console.ReadLine();
                 try
                 {
@@ -738,7 +1036,7 @@ namespace HMIA
                         {
 
                             // Validation start here for strings
-                            Validate.Payment(ref isValid, result.ToString(), value, "PAYMENT", fieldNumber, 8,process);
+                            Validate.Payment(ref isValid, result.ToString(), value, "PAYMENT", fieldNumber, 8, process);
 
                             // if success return result
                             if (isValid) return (T)result;
@@ -755,17 +1053,17 @@ namespace HMIA
                         if (char.TryParse(input, out _char))
                         {
                             // // Validation start here for strings
-                            Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 0, 
-                                new string[] { "1", "2","3" });//role menu
-                            Validate.InputCharacter(ref isValid, _char.ToString(), "PROCESS", fieldNumber, 1, 
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "ROLE", fieldNumber, 0,
+                                new string[] { "1", "2", "3" });//role menu
+                            Validate.InputCharacter(ref isValid, _char.ToString(), "PROCESS", fieldNumber, 1,
                                 new string[] { "1", "2", "3", "4", "5", "6", "7" });//process menu
                             Validate.InputCharacter(ref isValid, _char.ToString(), "CONFIRMATION", fieldNumber, 9,
-                                new string[] { "Y", "N"});// confirmation
+                                new string[] { "Y", "N", "y", "n" });// confirmation
                             Validate.InputCharacter(ref isValid, _char.ToString(), "SEARCH BY", fieldNumber, 10,
-                                new string[] { "O", "R","D", "X"});// search menu
+                                new string[] { "O", "R", "D", "X", "o", "r", "d", "x" });// search menu
 
                             Validate.InputCharacter(ref isValid, _char.ToString(), "UPDATE", fieldNumber, 12,
-                                new string[] { "1", "2", "3"}); //update booking menu
+                                new string[] { "1", "2", "3" }); //update booking menu
 
                             Validate.InputCharacter(ref isValid, _char.ToString(), "UPDATE INFO", fieldNumber, 13,
                                 new string[] { "1", "2", "3", "4", "5", "6" }); //update booking menu
@@ -781,32 +1079,37 @@ namespace HMIA
                     {
                         string formattedDate = DateTime.Now.ToString("MM-dd-yyyy");
                         // Validation start here for strings
-                        Validate.InputLength( ref isValid,input, 4, 15, "FIRSTNAME",fieldNumber, 2);//firstname
+                        Validate.InputLength(ref isValid, input, 4, 15, "FIRSTNAME", fieldNumber, 2);//firstname
                         Validate.InputLength(ref isValid, input, 4, 15, "LASTNAME", fieldNumber, 3);//lastname
 
-                        Validate.InputCharacter(ref isValid, input, "ROOM NUMBER", fieldNumber, 4,//room number
-                            new string[] {"L01", "L02" , "L03" , "S01" , "S02" , "S03" });
-                        if (!occupant)
-                        {
-                            Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4);//room number
-                        }
-                        else
-                        {
-                            Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4, occupant);//room number
-                        }
-                        
+                        Validate.InputCharacter(ref isValid, input.ToUpper(), "ROOM NUMBER", fieldNumber, 4,//room number
+                            new string[] { "L01", "L02", "L03", "S01", "S02", "S03" });
+
                         Validate.CheckDate(ref isValid, input, "CHECK-IN", fieldNumber, 6);//check in
-                        Validate.CheckInOut(ref isValid, input,formattedDate, "CHECK-IN", fieldNumber, 6);//check in
+                        Validate.CheckInOut(ref isValid, input, formattedDate, "CHECK-IN", fieldNumber, 6);//check in
 
                         Validate.CheckDate(ref isValid, input, "CHECK-OUT", fieldNumber, 7);//check out
                         Validate.CheckInOut(ref isValid, input, value, "CHECK-OUT", fieldNumber, 7);//check out
+
+                        //if (!occupant)
+                        //{
+                        //    Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4);//room number
+                        //}
+                        //else
+                        //{
+                        //    Validate.RoomAvailable(ref isValid, input, "ROOM NUMBER", fieldNumber, 4, occupant);//room number
+                        //}
+
+
 
                         if (isValid) return (T)(object)input;
                     }
                 }
                 catch (Exception e)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\n\t-> " + e.Message + "\n");
+                    Console.ResetColor();
                 }
             }
         }
